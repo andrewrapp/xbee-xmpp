@@ -33,7 +33,6 @@ import com.rapplogic.xbee.api.zigbee.ZNetRemoteAtRequest;
 import com.rapplogic.xbee.api.zigbee.ZNetRemoteAtResponse;
 import com.rapplogic.xbee.api.zigbee.ZNetRxIoSampleResponse;
 import com.rapplogic.xbee.xmpp.client.GatewayOfflineException;
-import com.rapplogic.xbee.xmpp.client.XBeeGtalkClient;
 import com.rapplogic.xbee.xmpp.client.XBeeXmppClient;
 
 /**

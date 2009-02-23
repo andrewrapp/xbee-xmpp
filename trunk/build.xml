@@ -78,6 +78,7 @@ TODO provide bin, src, and examples distributions
 				<include name=".classpath"/>
 				<include name=".project"/>
 				<include name="COPYING"/>
+				<include name="startXmppClass.sh"/>
 			</fileset>
 		</copy>
 		
@@ -92,7 +93,7 @@ TODO provide bin, src, and examples distributions
 		<copy todir="${dist.dir}/docs">
 			 <fileset dir="docs"/>
 		</copy>
-				
+			
 		<zip basedir="${dist.dir}" destfile="xbee-xmpp-${release}.zip"/>
 	</target>
 	

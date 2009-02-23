@@ -44,6 +44,7 @@ import com.rapplogic.xbee.xmpp.XBeeXmppUtil;
  * TODO errorhandling
  * TODO request listener in case you want to log incoming requests
  * TODO allow option for offline messages.  default for gtalk when user is offline.  openfire requires configuration
+ * TODO create a listen-only option for clients that can receive packets but can't send
  * 
  * @author andrew
  *
@@ -86,18 +87,50 @@ public abstract class XBeeXmppGateway extends XBeeXmppPacket {
 	 */
 	public XBeeXmppGateway(String server, Integer port, String user, String password, List<String> clientList, String comPort, int baudRate) throws XMPPException, XBeeException {
 		super(server, port, user, password);
+		
+		if (clientList == null || clientList.size() == 0) {
+			throw new IllegalArgumentException("client list is null or empty.  you must provide at least one client");
+		}
+		
 		this.setClientList(clientList);
 		this.setComPort(comPort);
 		this.setBaudRate(baudRate);
 	}
+
+	/**
+	 * Creates a gateway with an existing XBee object
+	 * 
+	 * @param server
+	 * @param port
+	 * @param user
+	 * @param password
+	 * @param clientList
+	 * @param xbee
+	 * @throws XMPPException
+	 * @throws XBeeException
+	 */
+	public XBeeXmppGateway(String server, Integer port, String user, String password, List<String> clientList, XBee xbee) throws XMPPException, XBeeException {
+		super(server, port, user, password);
+		this.setClientList(clientList);
+		this.setComPort(comPort);
+		this.setBaudRate(baudRate);
+		this.xbee = xbee;
+	}
 	
 	public void start() {
 		try {			
-			xbee = new XBee();
-			log.info("opening xbee serial port connection to " + comPort);
-			xbee.open(this.getComPort(), this.getBaudRate());
-	
+			if (xbee == null) {
+				// xbee was not passed in.  create
+				xbee = new XBee();	
+				log.info("opening xbee serial port connection to " + comPort);
+				xbee.open(this.getComPort(), this.getBaudRate());
+			} else {
+				// TODO should have isConnected method to verify the supplied xbee object is connected
+			}
+			
 			this.initXmpp();
+			
+			//xbee.addPacketListener(this);
 			
 			while (true) {
 				XBeeResponse response = xbee.getResponse();
@@ -126,6 +159,7 @@ public abstract class XBeeXmppGateway extends XBeeXmppPacket {
 					}
 				}
 			}
+			
 		} catch (Exception e) {
 			log.error("error: ", e);
 		} finally {
@@ -197,6 +231,44 @@ public abstract class XBeeXmppGateway extends XBeeXmppPacket {
 	    }
     }
     
+     
+//	/**
+//	 * Called by the XBee-API packet parser thread when a new response is parsed
+//	 * 
+//	 * TODO process response in separate thread so we don't affect performance of the xbee thread that calls this method
+//	 */
+//    public void processResponse(XBeeResponse response) {
+//
+//		try {
+//			log.debug("received response from xbee " + response);
+//			
+//			// TODO check for error.  if error occurred in PacketParser class, this may not be preserved in re-hydration unless exact byte array is preserved
+//			
+//			if (response.isError()) {
+//				log.error("response is error: " + response.toString());
+//			}
+//			
+//			Message msg = this.encodeMessage(response);
+//			
+//			log.debug("forwarding response to xmpp clients");
+//			
+//			// send to all online clients
+//			for (String client :this.getChatMap().keySet()) {
+//				Boolean presence = this.getPresenceMap().get(client);
+//				
+//				if (presence != null && presence == Boolean.TRUE) {
+//					log.debug("sending packet to " + client + ", message: " + msg.getBody());
+//					this.getChatMap().get(client).sendMessage(msg.getBody());
+//				} else {
+//					// such and such is offline
+//					log.debug(client + " is offline and will not receive the response");
+//				}
+//			}			
+//		} catch (Exception e) {
+//			log.error("error processing response", e);
+//		}
+//	}
+	
     protected List<String> getRosterList() {
     	return clientList;
     }
