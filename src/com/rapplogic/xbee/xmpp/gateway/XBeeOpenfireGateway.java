@@ -25,6 +25,7 @@ import org.apache.log4j.Logger;
 import org.jivesoftware.smack.XMPPException;
 import org.jivesoftware.smack.packet.Presence;
 
+import com.rapplogic.xbee.api.XBee;
 import com.rapplogic.xbee.api.XBeeException;
 import com.rapplogic.xbee.xmpp.XBeeOpenfireCommon;
 
@@ -45,7 +46,23 @@ public class XBeeOpenfireGateway extends XBeeXmppGateway {
 	public XBeeOpenfireGateway(String server, int port, String user, String password, List<String> clientList, String comPort, int baudRate) throws XMPPException, XBeeException {
 		super(server, port, user, password, clientList, comPort, baudRate);
 	}
-    
+
+	/**
+	 * Creates an Openfire gateway with an existing (and connected) XBee object
+	 * 
+	 * @param server
+	 * @param port
+	 * @param user
+	 * @param password
+	 * @param clientList
+	 * @param xbee
+	 * @throws XMPPException
+	 * @throws XBeeException
+	 */
+	public XBeeOpenfireGateway(String server, int port, String user, String password, List<String> clientList, XBee xbee) throws XMPPException, XBeeException {
+		super(server, port, user, password, clientList, xbee);
+	}
+	
 	protected void connect() throws XMPPException {
 		this.setConnection(XBeeOpenfireCommon.connect(this.getServer(), this.getPort(), this.getUser(), this.getPassword()));
 	}
