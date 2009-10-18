@@ -69,11 +69,13 @@ public class XBeeGtalkCommon {
 		return connection;
 	}   
 	
+	/**
+	 * Returns true if presence starts with "available"
+	 * 
+	 * @param presence
+	 * @return
+	 */
 	public static boolean isAvailable(Presence presence) {
-		if (presence.toString().equals("available ()") || presence.toString().equals("available")) {
-			return true;
-		}	
-	
-		return false;
+		return presence.toString().startsWith("available");
 	}
 }

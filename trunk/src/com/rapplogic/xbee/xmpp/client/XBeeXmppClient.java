@@ -21,6 +21,9 @@ package com.rapplogic.xbee.xmpp.client;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.LinkedBlockingQueue;
+import java.util.concurrent.TimeUnit;
 
 import org.apache.log4j.Logger;
 import org.jivesoftware.smack.Chat;
@@ -28,21 +31,22 @@ import org.jivesoftware.smack.XMPPException;
 import org.jivesoftware.smack.packet.Message;
 
 import com.rapplogic.xbee.api.PacketListener;
-import com.rapplogic.xbee.api.PacketStream;
+import com.rapplogic.xbee.api.XBeeException;
+import com.rapplogic.xbee.api.XBeeFrameIdResponse;
 import com.rapplogic.xbee.api.XBeeRequest;
 import com.rapplogic.xbee.api.XBeeResponse;
-import com.rapplogic.xbee.util.IntArrayInputStream;
+import com.rapplogic.xbee.api.XBeeTimeoutException;
 import com.rapplogic.xbee.xmpp.XBeeXmppPacket;
+import com.rapplogic.xbee.xmpp.XBeeXmppUtil;
 
 /**
- * Provides communication with a XBee radio over XMPP
+ * Provides communication with an XBee radio over XMPP.
  * A instance of XBeeXmppGateway must be running for this class to function.
- * 
+ * <p/>
  * Connects to gateway and subscribes to the gateway, if not already in roster
  * Gateway does not need to be online at startup but of course send/receive will not be possible until gateway is online.
- * Once the gateway is online, client will resume sending/receiving data, if in forever loop
- * 
- * Important: You must make sure this client is in the the gateway's client list or it will not be able to communicate
+ * <p/>
+ * Important: You must make sure the client's JID is in the the gateway's client list or it will not be able to communicate
  * with the gateway.  XMPP does not allow communication with another user (such as the gateway) until you have subscribed to/invited them 
  * AND they have subscribed to/accepted you.  If only the client has subscribed, it will receive presence events and can send messages
  * but these messages will not be received and no error will be generated.
@@ -55,6 +59,11 @@ public abstract class XBeeXmppClient extends XBeeXmppPacket {
 	private final static Logger log = Logger.getLogger(XBeeXmppClient.class);
 
 	private String gateway;
+	
+	private final static int queueSize = 100;
+	
+	// we could set the capacity to queueSize but without synchronization on processMessage, the queue could exceed this size for brief moments
+	private BlockingQueue<XBeeResponse> responseQueue = new LinkedBlockingQueue<XBeeResponse>();
 	
 	public XBeeXmppClient(String server, Integer port, String user, String password, String gateway) {
 		super(server, port, user, password);
@@ -73,6 +82,11 @@ public abstract class XBeeXmppClient extends XBeeXmppPacket {
 		this.gateway = gateway;
 	}
 	
+	/**
+	 * Establishes a connection to the XMPP Server
+	 * 
+	 * @throws XMPPException
+	 */
 	public void start() throws XMPPException {
 		synchronized (this) {
 
@@ -82,19 +96,41 @@ public abstract class XBeeXmppClient extends XBeeXmppPacket {
 			this.initXmpp();
 		}
 	}
-
+	
     public void processMessage(Chat chat, Message message) {
 		
     	try {
-    		log.debug("Message is " + message.toXML());
-    
+    		if (log.isDebugEnabled()) {
+    			log.debug("Received message from gateway: " + message.toXML());	
+    		}
+    		
 	    	int[] packet = this.decodeMessage(message);
 	    	
 	    	// works awesomely!
-	    	XBeeResponse response = hydrate(packet);
+	    	XBeeResponse response = XBeeXmppUtil.decodeXBeeResponse(packet);
 	    	
-	    	log.debug("hydrated response: " + response);
-
+	    	if (log.isInfoEnabled()) {
+	    		log.info("Hydrated response from gateway: " + response);	
+	    	}
+	    	
+	    	// add to blocking queue
+	    	while (responseQueue.size() >= queueSize) {
+		    	if (log.isInfoEnabled()) {
+		    		log.info("Queue size has reached or exceeded maximum of " + queueSize + ", trimming head by one");	
+		    	}
+		    	
+	    		// discard one
+	    		responseQueue.poll();	    		
+	    	}
+	    	
+    		if (!responseQueue.offer(response)) {
+    			log.error("Failed to offer response to queue.  Size is " + responseQueue.size());
+    		} else {
+        		if (log.isDebugEnabled()) {
+        			log.debug("Added response to response queue");	
+        		}
+    		}
+	    	
 	    	// distribute the response to listeners
 	    	for (PacketListener listener : this.getPacketListeners()) {
 	    		listener.processResponse(response);
@@ -105,32 +141,144 @@ public abstract class XBeeXmppClient extends XBeeXmppPacket {
     	}	
     }
 	
+    /**
+     * Retrieves a response from the response queue, waiting if necessary.
+     * The response queue supports a maximum of 100 packets.  When full
+     * it removes packets from the head of the queue to make space.
+     *  
+     * @return
+     * @throws XBeeException
+     */
+	public XBeeResponse getResponse() throws XBeeException {
+		try {
+			return responseQueue.take();
+		} catch (InterruptedException e) {
+			throw new XBeeException(e);
+		}
+	}
+
+	/**
+	 * Retrieves a response from the response queue, waiting up to timeout milliseconds, if necessary.
+	 * A XBeeTimeoutException exception is thrown if no response is received within timeout milliseconds.
+	 * 
+	 * @param timeout
+	 * @return
+	 * @throws XBeeException
+	 * @throws XBeeTimeoutException
+	 */
+	public XBeeResponse getResponse(int timeout) throws XBeeException, XBeeTimeoutException {
+		try {
+			if (timeout < 0) {
+				throw new IllegalArgumentException("timeout must be positive or zero");
+			}
+			
+			if (timeout > 0) {
+				XBeeResponse response = responseQueue.poll(timeout, TimeUnit.MILLISECONDS);
+				
+				if (response == null) {
+					throw new XBeeTimeoutException();
+				} else {
+					return response;
+				}
+			} else {
+				return responseQueue.take();	
+			}
+			
+		} catch (InterruptedException e) {
+			throw new XBeeException(e);
+		}
+	}
+	
     protected List<String> getRosterList() {
     	List<String> gateway = new ArrayList<String>();
     	gateway.add(this.getGateway());
     	return gateway;
     }
-    
-	public static XBeeResponse hydrate(int[] packet) {
-    	IntArrayInputStream in = new IntArrayInputStream(packet);
-    	
-    	// reconstitute XBeeResponse from int array
-    	PacketStream ps = new PacketStream(in);
-    	// this method will not throw an exception
-    	XBeeResponse response = ps.parsePacket();
-    	
-    	return response;
-	}
 	
-	public void sendXBeeRequest(XBeeRequest request) throws XMPPException, GatewayOfflineException {
+    /**
+     * Sends a request to the gateway and returns, not waiting for a response.
+     * Throws GatewayOfflineException if gateway is offline.
+     * 
+     * @param request
+     * @throws XMPPException
+     * @throws XBeeException
+     */
+	public void sendAsynchronous(XBeeRequest request) throws XMPPException, XBeeException {
 		Message message = this.encodeMessage(request);
 		// TODO error handling -- for now we just assume it was received
 		
-		if (!this.isGatewayOnline()) {
+		if (!this.isGatewayOnline() && !this.isOfflineMessages()) {
 			throw new GatewayOfflineException();
 		} 
 		
-		this.getChat().sendMessage(message);	
+		if (log.isInfoEnabled()) {
+			log.info("Sending request to gateway: " + request);
+		}
+		
+		this.getChat().sendMessage(message);			
+	}
+	
+	/**
+	 * Clears the response queue and sends the request to the radio.
+	 * Waits up to timeout milliseconds for a response that matches the frame id of the request.
+	 * If no matching response is found, a XBeeTimeoutException is thrown.
+	 * The request must have a non-zero frame id to guarantee a response, or an exception will be thrown.
+	 *  
+	 * @param request
+	 * @param timeout
+	 * @return
+	 * @throws XBeeTimeoutException
+	 * @throws XBeeException
+	 * @throws XMPPException
+	 */
+	public XBeeResponse sendSynchronous(final XBeeRequest request, int timeout) throws XBeeTimeoutException, XBeeException, XMPPException {
+
+		final long start = System.currentTimeMillis();
+		int varTimeout = timeout; 
+			
+		if (request.getFrameId() == XBeeRequest.NO_RESPONSE_FRAME_ID) {
+			throw new XBeeException("Frame Id cannot be 0 for a synchronous call -- it will always timeout as there is no response!");
+		}
+		
+		// clear queue so we don't waste time examining stale responses
+		log.debug("synchronousSend(): clearing queue");
+		this.responseQueue.clear();
+		
+		this.sendAsynchronous(request);
+		
+		XBeeResponse response = null;
+		
+		while (varTimeout > 0) {
+			response = this.getResponse(varTimeout);
+
+			if (response instanceof XBeeFrameIdResponse && ((XBeeFrameIdResponse)response).getFrameId() == request.getFrameId()) {
+				// got it
+				return response;
+			} else {
+				log.debug("synchronousSend(): Got response [" + response + "] but frame id does not match.  Adjusting timeout and trying again");
+				// TODO we are trashing this response.  user's will need to use packetlistner to capture traffic that may be discarded in synchronousSend
+				response = null;
+				
+				varTimeout = timeout - (int)(System.currentTimeMillis() - start);
+			}		
+		}
+		
+		// no matching responses
+		throw new XBeeTimeoutException();
+	}
+	
+	public BlockingQueue<XBeeResponse> getResponseQueue() {
+		return responseQueue;
+	}
+	
+	/**
+	 * @deprecated use sendAsynchronous
+	 * @param request
+	 * @throws XMPPException
+	 * @throws GatewayOfflineException
+	 */
+	public void sendXBeeRequest(XBeeRequest request) throws XMPPException, XBeeException {
+		this.sendAsynchronous(request);
 	}
 	
 	public void shutdown() {

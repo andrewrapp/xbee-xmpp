@@ -23,16 +23,16 @@ import org.apache.log4j.Logger;
 import org.apache.log4j.PropertyConfigurator;
 import org.jivesoftware.smack.XMPPException;
 
-import com.rapplogic.xbee.api.ErrorResponse;
-import com.rapplogic.xbee.api.PacketListener;
 import com.rapplogic.xbee.api.XBeeAddress16;
 import com.rapplogic.xbee.api.XBeeAddress64;
+import com.rapplogic.xbee.api.XBeeException;
 import com.rapplogic.xbee.api.XBeeRequest;
-import com.rapplogic.xbee.api.XBeeResponse;
+import com.rapplogic.xbee.api.XBeeTimeoutException;
 import com.rapplogic.xbee.api.zigbee.ZNetRemoteAtRequest;
 import com.rapplogic.xbee.api.zigbee.ZNetRemoteAtResponse;
 import com.rapplogic.xbee.api.zigbee.ZNetRxIoSampleResponse;
 import com.rapplogic.xbee.xmpp.client.GatewayOfflineException;
+import com.rapplogic.xbee.xmpp.client.XBeeGtalkClient;
 import com.rapplogic.xbee.xmpp.client.XBeeXmppClient;
 
 /**
@@ -43,18 +43,16 @@ import com.rapplogic.xbee.xmpp.client.XBeeXmppClient;
  * @author andrew
  *
  */
-public class XBeeXmppClientRemoteAtExample implements PacketListener {
+public class XBeeXmppClientRemoteAtExample {
 	
 	private final static Logger log = Logger.getLogger(XBeeXmppClientRemoteAtExample.class);
-	
-	private XBeeResponse response;
 
-	public static void main(String[] args) throws XMPPException, InterruptedException, GatewayOfflineException {
+	public static void main(String[] args) throws XMPPException, InterruptedException, XBeeException {
 		PropertyConfigurator.configure("log4j.properties");
 		new XBeeXmppClientRemoteAtExample();
 	}
 
-	public XBeeXmppClientRemoteAtExample() throws XMPPException, InterruptedException, GatewayOfflineException {
+	public XBeeXmppClientRemoteAtExample() throws XMPPException, InterruptedException, XBeeException {
 		XBeeXmppClient client = null;
 		
 		try {
@@ -63,9 +61,8 @@ public class XBeeXmppClientRemoteAtExample implements PacketListener {
 			// using openfire
 			//client = new XBeeOpenfireClient("localhost", 5222, "xbeeclient", "xbeeclient", "xbeegateway@sencha.local");
 			// using gtalk
-			//client = new XBeeGtalkClient("xbeeclient@gmail.com", "password", "xbeegateway@gmail.com");
-
-			client.addPacketListener(this);
+			client = new XBeeGtalkClient("xbeeclient@gmail.com", "password", "xbeegateway@gmail.com");
+			
 			client.start();
 			
 			// gateway may be online, but we haven't received the online event.. wait a bit to get presence event
@@ -90,51 +87,44 @@ public class XBeeXmppClientRemoteAtExample implements PacketListener {
 			
 			// of course we could always use the IR command to have XBee send periodic samples
 			
-			XBeeResponse atResponse = null;
+			ZNetRemoteAtResponse response = null;
 			
-			synchronized (this) {			
-				client.sendXBeeRequest(request);
+			try {
+				log.debug("Sending Remote AT request: " + request);
 				// wait a max of 10 seconds for response
-				this.wait(10000);
+				response = (ZNetRemoteAtResponse) client.sendSynchronous(request, 10000);
 				
-				if (response != null && !response.isError()) {
-					atResponse = this.response;
-					this.response = null;
-				} else {
-					throw new RuntimeException("didn't get a response back from remote at or got failure");
+				if (!response.isOk()) {
+					throw new RuntimeException("Remote AT request failed: " + response.getStatus());
 				}
+			} catch (XBeeTimeoutException e) {
+				throw new RuntimeException("timed out while waiting for a response");
 			}
 			
-			log.debug("received remote at response " + atResponse);
+			log.debug("received remote at response " + response);
 			
 			while (true) {
 				// now we will periodically force a sample (IS) of the analog input on the end device
 				request = 
 					new ZNetRemoteAtRequest(XBeeRequest.DEFAULT_FRAME_ID, addr64, XBeeAddress16.ZNET_BROADCAST, true, "IS");
 		
-				synchronized (this) {
-					try {
-						client.sendXBeeRequest(request);
-						this.wait(10000);
-						
-						if (response != null) {
-							atResponse = this.response;
-							this.response = null;
-		
-							if (atResponse.isError()) {
-								log.error("received error response: " + ((ErrorResponse)response).getErrorMsg());
-							} else {
-								ZNetRxIoSampleResponse ioSample = ((ZNetRemoteAtResponse)atResponse).parseIsSample();
-								log.info("Pin 20 10-bit reading is " + ioSample.getAnalog0());
-							}
-						} else {
-							log.error("timedout and didn't get a response back from remote at request");
-						}
-					} catch (GatewayOfflineException goe) {
-						log.warn("Gateway is currently offline");
-					} catch (Exception e) {
-						log.error("request failed ", e);
+				try {
+					log.debug("Sending Remote AT request: " + request);
+					
+					response = (ZNetRemoteAtResponse) client.sendSynchronous(request, 10000);
+
+					if (response.isOk()) {
+						ZNetRxIoSampleResponse ioSample = response.parseIsSample();
+						log.info("Pin 20 10-bit reading is " + ioSample.getAnalog0());							
+					} else {
+						log.info("Received error status: " + response.getStatus());
 					}
+				} catch (XBeeTimeoutException e) {
+					log.warn("Request timed out");
+				} catch (GatewayOfflineException goe) {
+					log.warn("Gateway is currently offline");
+				} catch (Exception e) {
+					log.error("request failed ", e);
 				}
 				
 				Thread.sleep(30000);
@@ -143,21 +133,6 @@ public class XBeeXmppClientRemoteAtExample implements PacketListener {
 			try {
 				client.shutdown();
 			} catch (Exception e) {}
-		}
-	}
-	
-	/**
-	 * Called by XbeeXmppClient when a packet is received
-	 */
-	public void processResponse(XBeeResponse response) {
-		synchronized(this) {
-			if (response instanceof ZNetRemoteAtResponse || response instanceof ErrorResponse) {
-				this.response = response;
-				log.debug("received response " + response);
-				this.notify();		
-			} else {
-				log.debug("ignoring non ZNetRemoteAtResponse: " + response);
-			}
 		}
 	}
 }

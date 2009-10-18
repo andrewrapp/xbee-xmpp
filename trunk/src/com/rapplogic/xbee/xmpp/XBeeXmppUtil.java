@@ -21,14 +21,86 @@ package com.rapplogic.xbee.xmpp;
 
 import java.util.Random;
 
+import com.rapplogic.xbee.api.PacketStream;
+import com.rapplogic.xbee.api.XBeeRequest;
+import com.rapplogic.xbee.api.XBeeResponse;
+import com.rapplogic.xbee.util.IntArrayInputStream;
+
 public class XBeeXmppUtil {
+	
+	/**
+	 * Converts an XBeeRequest into an ASCII representation, to be sent over XMPP
+	 * 
+	 * @param request
+	 * @return
+	 */
+    public static String encodeXBeeRequest(XBeeRequest request) {		
+		return XBeeXmppUtil.convertIntArrayToHexString(request.getXBeePacket().getPacket());
+    }
+
+    /**
+     * Converts the incoming XMPP ascii message into an XBeeResponse object instance 
+     * 
+     * @param message
+     * @return
+     * @throws DecodeException
+     */
+	public static XBeeResponse decodeXBeeResponse(String message) throws DecodeException {		
+		int[] packet = convertHexStringToIntArray(message);
+
+    	return decodeXBeeResponse(packet);
+	}
+
+	public static XBeeResponse decodeXBeeResponse(int[] packet) throws DecodeException {
+		
+    	IntArrayInputStream in = new IntArrayInputStream(packet);
+    	
+    	// reconstitute XBeeResponse from int array
+    	PacketStream ps = new PacketStream(in);
+    	// this method will not throw an exception
+    	XBeeResponse response = ps.parsePacket();
+    	
+    	return response;
+	}
+	
+    /**
+     * Extracts a packet from a smack message.  Could be either an XBeeResponse or XBeeRequest
+     * Each message contains a packet formated in hex, e.g. (001eff..)
+     * @throws DecodeException 
+     * 
+     */
+    public static int[] convertHexStringToIntArray(String message) throws DecodeException {
+    	
+//    	log.debug("hex from body is " + hex);
+    	
+    	if (message.length() % 2 > 0) {
+    		// TODO throw PacketDecodeException
+    		throw new DecodeException("incoming packet is not valid: string must be an even number of characters: " + message);
+    	}
+    
+    	int[] packet = new int[message.length() / 2]; 
+    	
+    	try {
+    	   	for (int i = 0; i < message.length(); i+=2) {	
+        		packet[i / 2] = Integer.parseInt(message.substring(i, i + 2), 16);
+        	}   		
+    	} catch (NumberFormatException nfe) {
+    		throw new DecodeException("incoming packet is not valid: contains non integer values: " + message);
+    	}
+ 
+    	
+//    	log.debug("after conversion, packet is " + ByteUtils.toBase16(packet));
+    	
+    	return packet;
+    }
+    
 	/**
 	 * Formats a byte array in hex, without the "0x" notation.
 	 * 
 	 * @param arr
 	 * @return
 	 */
-    public static String formatByteArrayAsHexString(int[] arr) {
+    public static String convertIntArrayToHexString(int[] arr) {
         
 //    	log.debug("packet is " + ByteUtils.toBase16(arr));
     	
@@ -90,17 +162,17 @@ public class XBeeXmppUtil {
     }
     
     /**
-     * Removes the provider from a xmmp address.  For example, removes "/Smack" from xbeegateway@sencha.local/Smack
+     * Removes the provider/id from the JID.  For example, removes "/Smack" from xbeegateway@sencha.local/Smack
      * 
-     * @param user
+     * @param jid
      * @return
      * Jan 24, 2009
      */
-    public static String stripProviderFromXmppUser(String user) {
-    	if (user.indexOf("/") > 0) {
-    		return user.substring(0, user.lastIndexOf("/"));
+    public static String stripProviderFromJid(String jid) {
+    	if (jid.indexOf("/") > 0) {
+    		return jid.substring(0, jid.lastIndexOf("/"));
     	}
     	
-    	return user;
+    	return jid;
     }
 }
