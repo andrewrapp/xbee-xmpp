@@ -25,73 +25,86 @@ import org.jivesoftware.smack.XMPPException;
 
 import com.rapplogic.xbee.api.AtCommand;
 import com.rapplogic.xbee.api.AtCommandResponse;
-import com.rapplogic.xbee.api.PacketListener;
+import com.rapplogic.xbee.api.XBeeException;
 import com.rapplogic.xbee.api.XBeeResponse;
+import com.rapplogic.xbee.api.XBeeTimeoutException;
 import com.rapplogic.xbee.util.ByteUtils;
 import com.rapplogic.xbee.xmpp.XBeeXmppUtil;
 import com.rapplogic.xbee.xmpp.client.GatewayOfflineException;
-import com.rapplogic.xbee.xmpp.client.XBeeOpenfireClient;
+import com.rapplogic.xbee.xmpp.client.XBeeGtalkClient;
 import com.rapplogic.xbee.xmpp.client.XBeeXmppClient;
 
-public class XBeeXmppClientExample implements PacketListener {
+public class XBeeXmppClientExample {
 	
 	private final static Logger log = Logger.getLogger(XBeeXmppClientExample.class);
 	
-	private XBeeResponse response;
-	private int frameId;
+	public XBeeXmppClientExample() throws XMPPException, XBeeException {
 	
-	public XBeeXmppClientExample() throws XMPPException, InterruptedException {
-	
-		XBeeXmppClient client = new XBeeOpenfireClient("localhost", 5222, "xbeeclient", "xbeeclient", "xbeegateway@sencha.local");
+//		XBeeXmppClient client = new XBeeOpenfireClient("localhost", 5222, "xbeeclient", "xbeeclient", "xbeegateway@sencha.local");
 		//XBeeXmppClient client = new XBeeOpenfireClient("localhost", 5222, "xbeeclient2", "xbeeclient2", "xbeegateway@sencha.local");
 		//XBeeXmppClient client = new XBeeOpenfireClient("localhost", 5222, "xbeeclient3", "xbeeclient3", "xbeegateway@sencha.local");
 		
 		// or use Gtalk (note: if you are using a google apps account for you domain, the username is username@yourdomain.com)
-		//XBeeXmppClient client = new XBeeGtalkClient("xbeeclient@gmail.com", "password", "xbeegateway@gmail.com");
+		XBeeXmppClient client = new XBeeGtalkClient("xbeeclient@gmail.com", "password", "xbeegateway@gmail.com");
 		
-		client.addPacketListener(this);
 		client.start();
 		
+		// the gateway may be online, but we haven't received the online event.. wait a bit to get presence event
+		long start = System.currentTimeMillis();
+		
+		while (!client.isGatewayOnline()) {
+			log.debug("Waiting for Gateway online presence");
+			try {
+				Thread.sleep(100);
+			} catch (InterruptedException e) { }
+			
+			if ((System.currentTimeMillis() - start) > 5000) {
+				break;
+			}
+		}
+		
+		if (client.isGatewayOnline()) {
+			log.debug("Gateway is online!");	
+		} else {
+			throw new RuntimeException("Gateway is not online!");
+		}
+		
+		// get association status
+		AtCommand at = new AtCommand("AI");
+		
 		while (true) {
-			synchronized (this) {
-				// get association status
-				AtCommand at = new AtCommand("AI");
-				this.frameId = XBeeXmppUtil.getDifferentFrameId(frameId);
-				at.setFrameId(frameId);
+			// set frame id to random value
+			at.setFrameId(XBeeXmppUtil.getDifferentFrameId(at.getFrameId()));
+							
+			try {
+				log.debug("Sending request: " + ByteUtils.toBase16(at.getXBeePacket().getPacket()));
 				
-				try {
-					client.sendXBeeRequest(at);
-					log.debug("sent message " + ByteUtils.toBase16(at.getXBeePacket().getPacket()));
-					
-					log.debug("waiting");
-					this.wait(5000);
-					
-					if (response == null) {
-						log.warn("command timed out");
-					}					
-				} catch (GatewayOfflineException goe) {
-					log.debug("gateway is not online.. waiting");
-				}
+				XBeeResponse response = client.sendSynchronous(at, 5000);
+				
+				log.debug("Received response " + response);
+				
+				if (response instanceof AtCommandResponse) {
+					if (((AtCommandResponse)response).isOk()) {
+						log.debug("AT command succeeded");
+					} else {
+						log.debug("AT command was not successful");
+					}
+				} else {
+					log.debug("Received a response but not the one we were expecting");
+				}	
+			} catch (XBeeTimeoutException e) {
+				log.debug("Timed out while waiting for a response");
+			} catch (GatewayOfflineException goe) {
+				log.debug("Gateway is not online");
 			}
 						
-			//Thread.sleep(10*60000);
-			Thread.sleep(10000);
+			try {
+				Thread.sleep(20000);
+			} catch (InterruptedException e) { }
 		}
 	}
 	
-	public void processResponse(XBeeResponse response) {
-		synchronized(this) {
-			if (response instanceof AtCommandResponse && ((AtCommandResponse)response).getFrameId() == this.frameId) {
-				this.response = response;
-				log.debug("received response " + response);
-				this.notify();				
-			} else {
-				log.debug("received response but not the one we were expecting");
-			}
-		}
-	}
-	
-	public static void main(String[] args) throws XMPPException, InterruptedException {
+	public static void main(String[] args) throws XMPPException, XBeeException {
 		PropertyConfigurator.configure("log4j.properties");
 		new XBeeXmppClientExample();
 	}

@@ -20,17 +20,17 @@
 package com.rapplogic.xbee.xmpp.client;
 
 import org.apache.log4j.Logger;
+import org.jivesoftware.smack.XMPPConnection;
 import org.jivesoftware.smack.XMPPException;
 import org.jivesoftware.smack.packet.Presence;
 
 import com.rapplogic.xbee.xmpp.XBeeOpenfireCommon;
 
 /**
- * This class provides communication with a XBee radio over XMPP
- * A instance of XBeeXmppGateway must be running for this class to function.
- * 
- * Only one instance per xmmp user account is supported.  If you connect using
- * a user accoun that is already in use, the other instance will get a unavailable gateway presence.
+ * Client implementation for Openfire
+ * <p/>
+ * Only one client instance per XMPP user account is supported.  If you connect using
+ * a user account that is already in use, the other instance will get a unavailable gateway presence.
  * 
  * @author andrew
  *
@@ -43,8 +43,8 @@ public class XBeeOpenfireClient extends XBeeXmppClient {
 		super(server, port, user, password, xbeeUser);
 	}
 	
-	protected void connect() throws XMPPException {
-		this.setConnection(XBeeOpenfireCommon.connect(this.getServer(), this.getPort(), this.getUser(), this.getPassword()));
+	protected XMPPConnection connect() throws XMPPException {
+		return XBeeOpenfireCommon.connect(this.getServer(), this.getPort(), this.getUser(), this.getPassword());
 	}
 	
 	protected boolean isAvailable(Presence presence) {

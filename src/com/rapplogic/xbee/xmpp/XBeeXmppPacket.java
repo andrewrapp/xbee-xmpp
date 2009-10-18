@@ -25,7 +25,6 @@ import org.jivesoftware.smack.packet.Message;
 import com.rapplogic.xbee.api.XBeeRequest;
 import com.rapplogic.xbee.api.XBeeResponse;
 
-
 /**
  * Contains methods necessary for encoding/decoding of XBee packets over XMPP
  */
@@ -49,7 +48,7 @@ public abstract class XBeeXmppPacket extends XBeeXmpp {
 		Message msg = new Message();
 		// send as hex string
 		
-		String hex = XBeeXmppUtil.formatByteArrayAsHexString(packet);
+		String hex = XBeeXmppUtil.convertIntArrayToHexString(packet);
 		
 		msg.setBody(hex);
 		
@@ -64,27 +63,6 @@ public abstract class XBeeXmppPacket extends XBeeXmpp {
      */
     protected int[] decodeMessage(Message message) throws DecodeException {
     	String hex = message.getBody();
-    	
-//    	log.debug("hex from body is " + hex);
-    	
-    	if (hex.length() % 2 > 0) {
-    		// TODO throw PacketDecodeException
-    		throw new DecodeException("incoming packet is not valid: string must be an even number of characters: " + message);
-    	}
-    
-    	int[] packet = new int[hex.length() / 2]; 
-    	
-    	try {
-    	   	for (int i = 0; i < hex.length(); i+=2) {	
-        		packet[i / 2] = Integer.parseInt(hex.substring(i, i + 2), 16);
-        	}   		
-    	} catch (NumberFormatException nfe) {
-    		throw new DecodeException("incoming packet is not valid: contains non integer values: " + message);
-    	}
- 
-    	
-//    	log.debug("after conversion, packet is " + ByteUtils.toBase16(packet));
-    	
-    	return packet;
+    	return XBeeXmppUtil.convertHexStringToIntArray(hex);
     }
 }
