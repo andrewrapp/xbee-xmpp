@@ -26,7 +26,7 @@ import org.apache.log4j.PropertyConfigurator;
 import org.jivesoftware.smack.XMPPException;
 
 import com.rapplogic.xbee.api.XBeeException;
-import com.rapplogic.xbee.xmpp.gateway.XBeeOpenfireGateway;
+import com.rapplogic.xbee.xmpp.gateway.XBeeGtalkGateway;
 import com.rapplogic.xbee.xmpp.gateway.XBeeXmppGateway;
 
 /**
@@ -44,14 +44,14 @@ public class XBeeXmppGatewayExample {
 //		clientList.add("xbeeclient2@sencha.local");
 //		clientList.add("xbeeclient3@sencha.local");
 		// using google talk
-		//clientList.add("xbeeclient@gmail.com");
+		clientList.add("xbeeclient@gmail.com");
 		
 		XBeeXmppGateway gateway = null;
 		
 		// using openfire.  use coordinator com port
-		gateway = new XBeeOpenfireGateway("localhost", 5222, "xbeegateway", "xbeegateway", clientList, "/dev/tty.usbserial-A6005v5M", 9600);
+		//gateway = new XBeeOpenfireGateway("localhost", 5222, "xbeegateway", "xbeegateway", clientList, "/dev/tty.usbserial-A6005v5M", 9600);
 		// using google talk
-		//gateway = new XBeeGtalkGateway("xbeegateway@gmail.com", "password", clientList, "/dev/tty.usbserial-A6005v5M", 9600);
+		gateway = new XBeeGtalkGateway("xbeegateway@gmail.com", "password", clientList, "/dev/tty.usbserial-A6005v5M", 9600);
 		
 		gateway.start();
 	}
