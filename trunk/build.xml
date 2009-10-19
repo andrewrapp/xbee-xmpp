@@ -126,7 +126,7 @@ TODO provide bin, src, and examples distributions
 	<target name="javadoc">
 		  <javadoc sourcepath="src"
 		  		   classpathref="compile-classpath" 
-		           excludepackagenames="*.examples.*"
+		           excludepackagenames="com.rapplogic.xbee.xmpp.examples"
 		           destdir="${javadoc.dir}"
 		           author="true"
 		  		   additionalparam="-notimestamp"
