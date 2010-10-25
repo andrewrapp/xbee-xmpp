@@ -44,9 +44,6 @@ import com.rapplogic.xbee.api.PacketListener;
  * <p/>
  * Automatically subscribes to all users in getRosterList on startup, if not already subscribed.
  * <p/>
- * The goal is to eventually integrate this project with XBee-API so that you that you can open a connection
- * to a XBee via the serial port, or over the network via XMPP, both using the same API.
- * <p/>
  * Note: if you send a message to a recipient, whom is not subscribed to you, the message will be echoed back
  * in processMessage(..).  The recipient will get a "so and so wants to add you as a friend yes/no" (if using Google Talk)
  * <p/>
