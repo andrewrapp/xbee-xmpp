@@ -90,7 +90,7 @@ public abstract class XBeeXmppClient extends XBeeXmppPacket implements XBeeSink 
 			this.initXmpp();
 		}		
 		
-		connection = new XmppXBeeConnection(this, 2048);
+		connection = new XmppXBeeConnection(this);
 		xbee.openProviderConnection(connection);
 	}
 
