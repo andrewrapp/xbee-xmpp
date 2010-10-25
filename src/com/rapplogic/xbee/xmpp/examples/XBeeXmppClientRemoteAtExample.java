@@ -23,13 +23,13 @@ import org.apache.log4j.Logger;
 import org.apache.log4j.PropertyConfigurator;
 import org.jivesoftware.smack.XMPPException;
 
+import com.rapplogic.xbee.api.RemoteAtRequest;
+import com.rapplogic.xbee.api.RemoteAtResponse;
 import com.rapplogic.xbee.api.XBeeAddress16;
 import com.rapplogic.xbee.api.XBeeAddress64;
 import com.rapplogic.xbee.api.XBeeException;
 import com.rapplogic.xbee.api.XBeeRequest;
 import com.rapplogic.xbee.api.XBeeTimeoutException;
-import com.rapplogic.xbee.api.zigbee.ZNetRemoteAtRequest;
-import com.rapplogic.xbee.api.zigbee.ZNetRemoteAtResponse;
 import com.rapplogic.xbee.api.zigbee.ZNetRxIoSampleResponse;
 import com.rapplogic.xbee.xmpp.client.GatewayOfflineException;
 import com.rapplogic.xbee.xmpp.client.XBeeGtalkClient;
@@ -53,7 +53,7 @@ public class XBeeXmppClientRemoteAtExample {
 	}
 
 	public XBeeXmppClientRemoteAtExample() throws XMPPException, InterruptedException, XBeeException {
-		XBeeXmppClient client = null;
+		XBeeGtalkClient client = null;
 		
 		try {
 			// using gtalk via ssh tunnel
@@ -82,17 +82,17 @@ public class XBeeXmppClientRemoteAtExample {
 			
 			// first we need to configure pin 20 to monitor analog input
 			// now is a good time to hook up a sensor to pin 20, but not required for the test
-			ZNetRemoteAtRequest request = 
-				new ZNetRemoteAtRequest(XBeeRequest.DEFAULT_FRAME_ID, addr64, XBeeAddress16.ZNET_BROADCAST, true, "D0", new int[] {0x2});
+			RemoteAtRequest request = 
+				new RemoteAtRequest(XBeeRequest.DEFAULT_FRAME_ID, addr64, XBeeAddress16.ZNET_BROADCAST, true, "D0", new int[] {0x2});
 			
 			// of course we could always use the IR command to have XBee send periodic samples
 			
-			ZNetRemoteAtResponse response = null;
+			RemoteAtResponse response = null;
 			
 			try {
 				log.debug("Sending Remote AT request: " + request);
 				// wait a max of 10 seconds for response
-				response = (ZNetRemoteAtResponse) client.sendSynchronous(request, 10000);
+				response = (RemoteAtResponse) client.sendSynchronous(request, 10000);
 				
 				if (!response.isOk()) {
 					throw new RuntimeException("Remote AT request failed: " + response.getStatus());
@@ -106,15 +106,15 @@ public class XBeeXmppClientRemoteAtExample {
 			while (true) {
 				// now we will periodically force a sample (IS) of the analog input on the end device
 				request = 
-					new ZNetRemoteAtRequest(XBeeRequest.DEFAULT_FRAME_ID, addr64, XBeeAddress16.ZNET_BROADCAST, true, "IS");
+					new RemoteAtRequest(XBeeRequest.DEFAULT_FRAME_ID, addr64, XBeeAddress16.ZNET_BROADCAST, true, "IS");
 		
 				try {
 					log.debug("Sending Remote AT request: " + request);
 					
-					response = (ZNetRemoteAtResponse) client.sendSynchronous(request, 10000);
+					response = (RemoteAtResponse) client.sendSynchronous(request, 10000);
 
 					if (response.isOk()) {
-						ZNetRxIoSampleResponse ioSample = response.parseIsSample();
+						ZNetRxIoSampleResponse ioSample = ZNetRxIoSampleResponse.parseIsSample(response);
 						log.info("Pin 20 10-bit reading is " + ioSample.getAnalog0());							
 					} else {
 						log.info("Received error status: " + response.getStatus());
@@ -131,7 +131,7 @@ public class XBeeXmppClientRemoteAtExample {
 			}
 		} finally {
 			try {
-				client.shutdown();
+				client.close();
 			} catch (Exception e) {}
 		}
 	}

@@ -24,6 +24,9 @@ import org.jivesoftware.smack.XMPPConnection;
 import org.jivesoftware.smack.XMPPException;
 import org.jivesoftware.smack.packet.Presence;
 
+import com.rapplogic.xbee.api.XBee;
+import com.rapplogic.xbee.api.XBeeConfiguration;
+import com.rapplogic.xbee.api.XBeeException;
 import com.rapplogic.xbee.xmpp.XBeeGtalkCommon;
 
 /**
@@ -32,23 +35,49 @@ import com.rapplogic.xbee.xmpp.XBeeGtalkCommon;
  * @author andrew
  *
  */
-public class XBeeGtalkClient extends XBeeXmppClient {
+public class XBeeGtalkClient extends XBee {
 
 	private final static Logger log = Logger.getLogger(XBeeGtalkClient.class);
 		
-	public XBeeGtalkClient(String server, Integer port, String user, String password, String xbeeUser) throws XMPPException {
-		super(server, port, user, password, xbeeUser);
+	private XBeeXmppClient xmpp;
+	
+	public XBeeGtalkClient(String server, Integer port, String user, String password, String gateway) throws XMPPException {
+		super(new XBeeConfiguration().withStartupChecks(false));
+		
+		xmpp = new XBeeXmppClient(this, server, port, user, password, gateway) {
+
+			@Override
+			protected XMPPConnection connect() throws XMPPException {
+				return XBeeGtalkCommon.connect(this.getServer(), this.getPort(), this.getUser(), this.getPassword());
+			}
+
+			@Override
+			protected boolean isAvailable(Presence presence) {
+				return XBeeGtalkCommon.isAvailable(presence);
+			}
+
+		};		
 	}
 
-	public XBeeGtalkClient(String user, String password, String xbeeUser) throws XMPPException {
-		super(null, null, user, password, xbeeUser);
+	public XBeeGtalkClient(String user, String password, String gateway) throws XMPPException {
+		this(null, null, user, password, gateway);
 	}
 	
-	protected XMPPConnection connect() throws XMPPException {
-		return XBeeGtalkCommon.connect(this.getServer(), this.getPort(), this.getUser(), this.getPassword());
+	/**
+	 * Establishes a connection to the XMPP Server
+	 * 
+	 * @throws XMPPException
+	 * @throws XBeeException 
+	 */
+	public void start() throws XMPPException, XBeeException {
+		xmpp.start();			
 	}
 	
-	protected boolean isAvailable(Presence presence) {
-		return XBeeGtalkCommon.isAvailable(presence);
+	public Boolean isGatewayOnline() {
+		return xmpp.isGatewayOnline();
+	}
+	
+	public void close() {
+		xmpp.close();
 	}
 }

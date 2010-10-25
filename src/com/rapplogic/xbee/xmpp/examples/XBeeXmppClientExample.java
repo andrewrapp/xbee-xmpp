@@ -31,8 +31,7 @@ import com.rapplogic.xbee.api.XBeeTimeoutException;
 import com.rapplogic.xbee.util.ByteUtils;
 import com.rapplogic.xbee.xmpp.XBeeXmppUtil;
 import com.rapplogic.xbee.xmpp.client.GatewayOfflineException;
-import com.rapplogic.xbee.xmpp.client.XBeeGtalkClient;
-import com.rapplogic.xbee.xmpp.client.XBeeXmppClient;
+import com.rapplogic.xbee.xmpp.client.XBeeOpenfireClient;
 
 public class XBeeXmppClientExample {
 	
@@ -42,10 +41,7 @@ public class XBeeXmppClientExample {
 	
 //		XBeeXmppClient client = new XBeeOpenfireClient("localhost", 5222, "xbeeclient", "xbeeclient", "xbeegateway@sencha.local");
 		//XBeeXmppClient client = new XBeeOpenfireClient("localhost", 5222, "xbeeclient2", "xbeeclient2", "xbeegateway@sencha.local");
-		//XBeeXmppClient client = new XBeeOpenfireClient("localhost", 5222, "xbeeclient3", "xbeeclient3", "xbeegateway@sencha.local");
-		
-		// or use Gtalk (note: if you are using a google apps account for you domain, the username is username@yourdomain.com)
-		XBeeXmppClient client = new XBeeGtalkClient("xbeeclient@gmail.com", "password", "xbeegateway@gmail.com");
+		XBeeOpenfireClient client = new XBeeOpenfireClient("localhost", 5222, "xbeeclient3", "xbeeclient3", "xbeegateway@sencha.local");
 		
 		client.start();
 		
