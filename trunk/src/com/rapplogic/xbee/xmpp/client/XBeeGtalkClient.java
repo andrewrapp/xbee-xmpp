@@ -41,9 +41,21 @@ public class XBeeGtalkClient extends XBee {
 		
 	private XBeeXmppClient xmpp;
 	
-	public XBeeGtalkClient(String server, Integer port, String user, String password, String gateway) throws XMPPException {
-		super(new XBeeConfiguration().withStartupChecks(false));
-		
+	public XBeeGtalkClient() {
+		super(new XBeeConfiguration().withStartupChecks(false));		
+	}
+	
+	public void open(String user, String password, String gateway) throws XMPPException, XBeeException {
+		this.open(null, null, user, password, gateway);
+	}
+	
+	/**
+	 * Establishes a connection to the XMPP Server
+	 * 
+	 * @throws XMPPException
+	 * @throws XBeeException 
+	 */
+	public void open(String server, Integer port, String user, String password, String gateway) throws XMPPException, XBeeException {
 		xmpp = new XBeeXmppClient(this, server, port, user, password, gateway) {
 
 			@Override
@@ -56,20 +68,8 @@ public class XBeeGtalkClient extends XBee {
 				return XBeeGtalkCommon.isAvailable(presence);
 			}
 
-		};		
-	}
-
-	public XBeeGtalkClient(String user, String password, String gateway) throws XMPPException {
-		this(null, null, user, password, gateway);
-	}
-	
-	/**
-	 * Establishes a connection to the XMPP Server
-	 * 
-	 * @throws XMPPException
-	 * @throws XBeeException 
-	 */
-	public void start() throws XMPPException, XBeeException {
+		};
+		
 		xmpp.start();			
 	}
 	

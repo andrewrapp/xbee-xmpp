@@ -31,7 +31,7 @@ import com.rapplogic.xbee.api.XBeeTimeoutException;
 import com.rapplogic.xbee.util.ByteUtils;
 import com.rapplogic.xbee.xmpp.XBeeXmppUtil;
 import com.rapplogic.xbee.xmpp.client.GatewayOfflineException;
-import com.rapplogic.xbee.xmpp.client.XBeeOpenfireClient;
+import com.rapplogic.xbee.xmpp.client.XBeeGtalkClient;
 
 public class XBeeXmppClientExample {
 	
@@ -39,11 +39,9 @@ public class XBeeXmppClientExample {
 	
 	public XBeeXmppClientExample() throws XMPPException, XBeeException {
 	
-//		XBeeXmppClient client = new XBeeOpenfireClient("localhost", 5222, "xbeeclient", "xbeeclient", "xbeegateway@sencha.local");
-		//XBeeXmppClient client = new XBeeOpenfireClient("localhost", 5222, "xbeeclient2", "xbeeclient2", "xbeegateway@sencha.local");
-		XBeeOpenfireClient client = new XBeeOpenfireClient("localhost", 5222, "xbeeclient3", "xbeeclient3", "xbeegateway@sencha.local");
+		XBeeGtalkClient client = new XBeeGtalkClient();
 		
-		client.start();
+		client.open("localhost", 5222, "xbeeclient3", "xbeeclient3", "xbeegateway@sencha.local");
 		
 		// the gateway may be online, but we haven't received the online event.. wait a bit to get presence event
 		long start = System.currentTimeMillis();
@@ -75,7 +73,7 @@ public class XBeeXmppClientExample {
 			try {
 				log.debug("Sending request: " + ByteUtils.toBase16(at.getXBeePacket().getPacket()));
 				
-				XBeeResponse response = client.sendSynchronous(at, 5000);
+				XBeeResponse response = client.sendSynchronous(at);
 				
 				log.debug("Received response " + response);
 				
