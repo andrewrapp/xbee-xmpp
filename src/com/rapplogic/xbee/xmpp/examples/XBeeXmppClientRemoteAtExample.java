@@ -56,14 +56,9 @@ public class XBeeXmppClientRemoteAtExample {
 		XBeeGtalkClient client = null;
 		
 		try {
-			// using gtalk via ssh tunnel
-			//client = new XBeeGtalkClient("localhost", 15222, "xbeeclient@gmail.com", "password", "xbeegateway@gmail.com");
-			// using openfire
-			//client = new XBeeOpenfireClient("localhost", 5222, "xbeeclient", "xbeeclient", "xbeegateway@sencha.local");
 			// using gtalk
-			client = new XBeeGtalkClient("xbeeclient@gmail.com", "password", "xbeegateway@gmail.com");
-			
-			client.start();
+			client = new XBeeGtalkClient();
+			client.open("xbeeclient@gmail.com", "password", "xbeegateway@gmail.com");
 			
 			// gateway may be online, but we haven't received the online event.. wait a bit to get presence event
 			long start = System.currentTimeMillis();

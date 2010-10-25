@@ -44,8 +44,17 @@ public class XBeeOpenfireClient extends XBee {
 
 	private XBeeXmppClient xmpp;
 	
-	public XBeeOpenfireClient(String server, int port, String user, String password, String gateway) throws XMPPException {
+	public XBeeOpenfireClient() {
 		super(new XBeeConfiguration().withStartupChecks(false));
+	}
+
+	/**
+	 * Establishes a connection to the XMPP Server
+	 * 
+	 * @throws XMPPException
+	 * @throws XBeeException 
+	 */
+	public void open(String server, int port, String user, String password, String gateway) throws XMPPException, XBeeException {
 		xmpp = new XBeeXmppClient(this, server, port, user, password, gateway) {
 
 			@Override
@@ -59,15 +68,7 @@ public class XBeeOpenfireClient extends XBee {
 			}
 
 		};
-	}
-
-	/**
-	 * Establishes a connection to the XMPP Server
-	 * 
-	 * @throws XMPPException
-	 * @throws XBeeException 
-	 */
-	public void start() throws XMPPException, XBeeException {
+		
 		xmpp.start();			
 	}
 	
