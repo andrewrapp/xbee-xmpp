@@ -91,7 +91,7 @@ public abstract class XBeeXmppClient extends XBeeXmppPacket implements Connectio
 		}		
 		
 		connection = new XmppXBeeConnection(this);
-		xbee.openProviderConnection(connection);
+		xbee.initProviderConnection(connection);
 	}
 
     public void processMessage(Chat chat, Message message) {
