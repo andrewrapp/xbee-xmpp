@@ -11,6 +11,13 @@ import org.apache.log4j.Logger;
 import com.rapplogic.xbee.XBeeConnection;
 import com.rapplogic.xbee.util.ByteUtils;
 
+/**
+ * This is a bit of a misnomer as we are not connected to anything.  This class serves as a buffer
+ * and provide input/output streams for xbee-api to use
+ * 
+ * @author andrew
+ *
+ */
 public class XmppXBeeConnection implements XBeeConnection {
 
 	private final static Logger log = Logger.getLogger(XBeeConnection.class);
@@ -18,7 +25,7 @@ public class XmppXBeeConnection implements XBeeConnection {
 	private int[] outputBuffer = new int[200];
 	private int outPosition;
 	
-	private XBeeSink sink;
+	private ConnectionSink sink;
 	
 	private PipedOutputStream pos = new PipedOutputStream();
 	private PipedInputStream pis = new PipedInputStream();
@@ -58,13 +65,13 @@ public class XmppXBeeConnection implements XBeeConnection {
 		}
 	};
 	
-	public XmppXBeeConnection(XBeeSink sink) {
+	public XmppXBeeConnection(ConnectionSink sink) {
 		this.sink = sink;
 		
 		try {
 			pis.connect(pos);	
 		} catch (IOException e) {
-			// cause it won't happen
+			// won't happen
 			throw new RuntimeException(e);
 		}
 	}

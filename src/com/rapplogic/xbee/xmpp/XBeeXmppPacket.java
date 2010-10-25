@@ -56,7 +56,7 @@ public abstract class XBeeXmppPacket extends XBeeXmpp {
     }
     
     /**
-     * Extracts a packet from a smack message
+     * Extracts a packet (either a XBeeRequest or XBeeResponse) from a smack message
      * Each message contains a packet formated in hex, e.g. (001eff..)
      * @throws DecodeException 
      * 

@@ -65,8 +65,9 @@ public class XBeeXmppUtil {
 	}
 	
     /**
-     * Extracts an XBeeResponse packet from a smack message.  Important: It includes the start byte  
+     * Extracts an XBeeResponse (client) or XBeeRequest (gateway) packet from a smack message.  
      * Each message contains a packet formated in hex, e.g. (001eff..)
+     * 
      * @throws DecodeException 
      * 
      */
@@ -75,18 +76,14 @@ public class XBeeXmppUtil {
 //    	log.debug("hex from body is " + hex);
     	
     	if (message.length() % 2 > 0) {
-    		// TODO throw PacketDecodeException
     		throw new DecodeException("incoming packet is not valid: string must be an even number of characters: " + message);
     	}
     
-    	int[] packet = new int[message.length() / 2 + 1]; 
-    	
-	   	// add start byte
-	   	packet[0] = XBeePacket.SpecialByte.START_BYTE.getValue();
+    	int[] packet = new int[message.length() / 2]; 
 	   	
     	try {
     	   	for (int i = 0; i < message.length(); i+=2) {	
-        		packet[i / 2 + 1] = Integer.parseInt(message.substring(i, i + 2), 16);
+        		packet[i / 2] = Integer.parseInt(message.substring(i, i + 2), 16);
         	}   		
     	} catch (NumberFormatException nfe) {
     		throw new DecodeException("incoming packet is not valid: contains non integer values: " + message);

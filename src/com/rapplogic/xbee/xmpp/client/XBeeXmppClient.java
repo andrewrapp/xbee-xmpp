@@ -48,7 +48,7 @@ import com.rapplogic.xbee.xmpp.XBeeXmppPacket;
  * @author andrew
  *
  */
-public abstract class XBeeXmppClient extends XBeeXmppPacket implements XBeeSink {
+public abstract class XBeeXmppClient extends XBeeXmppPacket implements ConnectionSink {
 
 	private final static Logger log = Logger.getLogger(XBeeXmppClient.class);
 
@@ -98,14 +98,19 @@ public abstract class XBeeXmppClient extends XBeeXmppPacket implements XBeeSink 
 		
     	try {
     		if (log.isDebugEnabled()) {
-    			log.debug("Received message from gateway: " + message.toXML());	
+    	    	log.debug("Received packet from gateway: " + message.getBody());
     		}
     		
 	    	int[] packet = this.decodeMessage(message);
 	    	
-	    	log.debug("Received packet from gateway: " + message.getBody());
+	    	// we need to add the start byte to the packet for xbee-api to be able to parse it as if it came fresh off the rxtx input stream 
+	    	int[] packetWithStartByte = new int[packet.length + 1];
 	    	
-	    	connection.addPacket(packet);		
+		   	// add start byte
+	    	packetWithStartByte[0] = XBeePacket.SpecialByte.START_BYTE.getValue();
+	    	System.arraycopy(packet, 0, packetWithStartByte, 1, packet.length);
+	    	
+	    	connection.addPacket(packetWithStartByte);		
     	} catch (Exception e) {
     		// TODO add to error listener
     		log.error("error processing message " + message.toXML(), e);
