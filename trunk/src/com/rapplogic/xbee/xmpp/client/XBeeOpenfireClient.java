@@ -24,6 +24,9 @@ import org.jivesoftware.smack.XMPPConnection;
 import org.jivesoftware.smack.XMPPException;
 import org.jivesoftware.smack.packet.Presence;
 
+import com.rapplogic.xbee.api.XBee;
+import com.rapplogic.xbee.api.XBeeConfiguration;
+import com.rapplogic.xbee.api.XBeeException;
 import com.rapplogic.xbee.xmpp.XBeeOpenfireCommon;
 
 /**
@@ -35,19 +38,44 @@ import com.rapplogic.xbee.xmpp.XBeeOpenfireCommon;
  * @author andrew
  *
  */
-public class XBeeOpenfireClient extends XBeeXmppClient {
+public class XBeeOpenfireClient extends XBee {
 
 	private final static Logger log = Logger.getLogger(XBeeOpenfireClient.class);
 
-	public XBeeOpenfireClient(String server, int port, String user, String password, String xbeeUser) throws XMPPException {
-		super(server, port, user, password, xbeeUser);
+	private XBeeXmppClient xmpp;
+	
+	public XBeeOpenfireClient(String server, int port, String user, String password, String gateway) throws XMPPException {
+		super(new XBeeConfiguration().withStartupChecks(false));
+		xmpp = new XBeeXmppClient(this, server, port, user, password, gateway) {
+
+			@Override
+			protected XMPPConnection connect() throws XMPPException {
+				return XBeeOpenfireCommon.connect(this.getServer(), this.getPort(), this.getUser(), this.getPassword());
+			}
+
+			@Override
+			protected boolean isAvailable(Presence presence) {
+				return XBeeOpenfireCommon.isAvailable(presence);
+			}
+
+		};
+	}
+
+	/**
+	 * Establishes a connection to the XMPP Server
+	 * 
+	 * @throws XMPPException
+	 * @throws XBeeException 
+	 */
+	public void start() throws XMPPException, XBeeException {
+		xmpp.start();			
 	}
 	
-	protected XMPPConnection connect() throws XMPPException {
-		return XBeeOpenfireCommon.connect(this.getServer(), this.getPort(), this.getUser(), this.getPassword());
+	public Boolean isGatewayOnline() {
+		return xmpp.isGatewayOnline();
 	}
 	
-	protected boolean isAvailable(Presence presence) {
-		return XBeeOpenfireCommon.isAvailable(presence);
-	}
+	public void close() {
+		xmpp.close();
+	}	
 }

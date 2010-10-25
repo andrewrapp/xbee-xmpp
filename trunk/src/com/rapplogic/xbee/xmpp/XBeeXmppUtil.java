@@ -21,7 +21,8 @@ package com.rapplogic.xbee.xmpp;
 
 import java.util.Random;
 
-import com.rapplogic.xbee.api.PacketStream;
+import com.rapplogic.xbee.api.PacketParser;
+import com.rapplogic.xbee.api.XBeePacket;
 import com.rapplogic.xbee.api.XBeeRequest;
 import com.rapplogic.xbee.api.XBeeResponse;
 import com.rapplogic.xbee.util.IntArrayInputStream;
@@ -56,7 +57,7 @@ public class XBeeXmppUtil {
     	IntArrayInputStream in = new IntArrayInputStream(packet);
     	
     	// reconstitute XBeeResponse from int array
-    	PacketStream ps = new PacketStream(in);
+    	PacketParser ps = new PacketParser(in);
     	// this method will not throw an exception
     	XBeeResponse response = ps.parsePacket();
     	
@@ -64,7 +65,7 @@ public class XBeeXmppUtil {
 	}
 	
     /**
-     * Extracts a packet from a smack message.  Could be either an XBeeResponse or XBeeRequest
+     * Extracts an XBeeResponse packet from a smack message.  Important: It includes the start byte  
      * Each message contains a packet formated in hex, e.g. (001eff..)
      * @throws DecodeException 
      * 
@@ -78,11 +79,14 @@ public class XBeeXmppUtil {
     		throw new DecodeException("incoming packet is not valid: string must be an even number of characters: " + message);
     	}
     
-    	int[] packet = new int[message.length() / 2]; 
+    	int[] packet = new int[message.length() / 2 + 1]; 
     	
+	   	// add start byte
+	   	packet[0] = XBeePacket.SpecialByte.START_BYTE.getValue();
+	   	
     	try {
     	   	for (int i = 0; i < message.length(); i+=2) {	
-        		packet[i / 2] = Integer.parseInt(message.substring(i, i + 2), 16);
+        		packet[i / 2 + 1] = Integer.parseInt(message.substring(i, i + 2), 16);
         	}   		
     	} catch (NumberFormatException nfe) {
     		throw new DecodeException("incoming packet is not valid: contains non integer values: " + message);

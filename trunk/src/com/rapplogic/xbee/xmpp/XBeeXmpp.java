@@ -27,6 +27,7 @@ import java.util.List;
 
 import org.apache.log4j.Logger;
 import org.jivesoftware.smack.Chat;
+import org.jivesoftware.smack.ConnectionListener;
 import org.jivesoftware.smack.MessageListener;
 import org.jivesoftware.smack.Roster;
 import org.jivesoftware.smack.RosterEntry;
@@ -324,10 +325,38 @@ public abstract class XBeeXmpp implements MessageListener, RosterListener {
 	 * @throws XMPPException
 	 * Jan 24, 2009
 	 */
-	//TODO rename to start
-    protected void initXmpp() throws XMPPException {
+    public void initXmpp() throws XMPPException {
     	synchronized (this) {
-    		this.setConnection(this.connect());
+    		XMPPConnection conn = this.connect();
+    		
+    		conn.addConnectionListener(new ConnectionListener() {
+
+    			final Logger log = Logger.getLogger(ConnectionListener.class);
+    			
+				public void connectionClosed() {
+					log.info("XMPP Connection closed");
+				}
+
+				public void connectionClosedOnError(Exception arg0) {
+					log.error("XMPP Connection closed", arg0);
+					
+				}
+
+				public void reconnectingIn(int arg0) {
+					log.info("XMPP Connection reconnectingIn " + arg0);
+				}
+
+				public void reconnectionFailed(Exception arg0) {
+					log.error("XMPP Connection reconnectionFailed ", arg0);
+					
+				}
+
+				public void reconnectionSuccessful() {
+					log.info("XMPP Connection reconnectionSuccessful");
+				}
+    		});
+    		
+    		this.setConnection(conn);
 
     		Roster roster = this.getConnection().getRoster();
     		// this is necessary to know who is online/offline

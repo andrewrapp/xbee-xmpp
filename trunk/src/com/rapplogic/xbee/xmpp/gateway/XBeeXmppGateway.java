@@ -37,6 +37,7 @@ import com.rapplogic.xbee.xmpp.DecodeException;
 import com.rapplogic.xbee.xmpp.XBeeXmppPacket;
 import com.rapplogic.xbee.xmpp.XBeeXmppUtil;
 
+
 /**
  * Interfaces a serial connected XBee network to XMPP.
  * All XBee response objects received from the serial line are forwarded to XMPP for awaiting clients  
@@ -185,6 +186,11 @@ public abstract class XBeeXmppGateway extends XBeeXmppPacket implements PacketLi
 			
 			if (response.isError()) {
 				log.error("response is error: " + response.toString());
+				if (response.getPacketBytes() == null) {
+					// TODO proper error handling
+					// set bogus packet with zero length and zero api id
+					response.setRawPacketBytes(new int[] {0, 0, 0});
+				}
 			}
 			
 			Message msg = this.encodeMessage(response);
@@ -270,15 +276,15 @@ public abstract class XBeeXmppGateway extends XBeeXmppPacket implements PacketLi
 							log.error("error occurred sending packet to XBee: ", e);
 						}	
 	    			} else {
-	    				log.warn("packet failed checksum verification.  discarding " + ByteUtils.toBase16(packet));
+	    				log.warn("packet from [" + message.getFrom() + "] failed checksum verification.  discarding " + ByteUtils.toBase16(packet));
 	    			}
 	    		}	    		
 	    	} catch (DecodeException de) {
-	    		log.warn("could not parse packet from xmpp message: " + de.getMessage());	
+	    		log.warn("could not parse packet from [" + message.getFrom() + "]: " + de.getMessage());	
 	    	}
 	    } catch (Exception e) {
 	    	// TODO communicate error back to client
-	    	log.error("failed to send packet " + (packet != null ? ByteUtils.toBase16(packet) : "null"), e);
+	    	log.error("failed to forward packet from [" + message.getFrom() + " to radio " + (packet != null ? ByteUtils.toBase16(packet) : "null"), e);
 	    }
     }
 	
