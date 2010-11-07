@@ -12,7 +12,9 @@ Class Hierarchy
 <SCRIPT type="text/javascript">
 function windowTitle()
 {
-    parent.document.title="Class Hierarchy";
+    if (location.href.indexOf('is-external=true') == -1) {
+        parent.document.title="Class Hierarchy";
+    }
 }
 </SCRIPT>
 <NOSCRIPT>
@@ -21,6 +23,7 @@ function windowTitle()
 </HEAD>
 
 <BODY BGCOLOR="white" onload="windowTitle();">
+<HR>
 
 
 <!-- ========= START OF TOP NAVBAR ======= -->
@@ -92,23 +95,26 @@ Class Hierarchy
 <LI TYPE="circle">com.rapplogic.xbee.xmpp.client.<A HREF="com/rapplogic/xbee/xmpp/client/GatewayOfflineException.html" title="class in com.rapplogic.xbee.xmpp.client"><B>GatewayOfflineException</B></A></UL>
 </UL>
 </UL>
+<LI TYPE="circle">com.rapplogic.xbee.api.XBee (implements com.rapplogic.xbee.api.IXBee)
+<UL>
+<LI TYPE="circle">com.rapplogic.xbee.xmpp.client.<A HREF="com/rapplogic/xbee/xmpp/client/XBeeGtalkClient.html" title="class in com.rapplogic.xbee.xmpp.client"><B>XBeeGtalkClient</B></A><LI TYPE="circle">com.rapplogic.xbee.xmpp.client.<A HREF="com/rapplogic/xbee/xmpp/client/XBeeOpenfireClient.html" title="class in com.rapplogic.xbee.xmpp.client"><B>XBeeOpenfireClient</B></A></UL>
 <LI TYPE="circle">com.rapplogic.xbee.xmpp.<A HREF="com/rapplogic/xbee/xmpp/XBeeGtalkCommon.html" title="class in com.rapplogic.xbee.xmpp"><B>XBeeGtalkCommon</B></A><LI TYPE="circle">com.rapplogic.xbee.xmpp.<A HREF="com/rapplogic/xbee/xmpp/XBeeOpenfireCommon.html" title="class in com.rapplogic.xbee.xmpp"><B>XBeeOpenfireCommon</B></A><LI TYPE="circle">com.rapplogic.xbee.xmpp.<A HREF="com/rapplogic/xbee/xmpp/XBeeXmpp.html" title="class in com.rapplogic.xbee.xmpp"><B>XBeeXmpp</B></A> (implements org.jivesoftware.smack.MessageListener, org.jivesoftware.smack.RosterListener)
 <UL>
 <LI TYPE="circle">com.rapplogic.xbee.xmpp.<A HREF="com/rapplogic/xbee/xmpp/XBeeXmppPacket.html" title="class in com.rapplogic.xbee.xmpp"><B>XBeeXmppPacket</B></A><UL>
-<LI TYPE="circle">com.rapplogic.xbee.xmpp.client.<A HREF="com/rapplogic/xbee/xmpp/client/XBeeXmppClient.html" title="class in com.rapplogic.xbee.xmpp.client"><B>XBeeXmppClient</B></A><UL>
-<LI TYPE="circle">com.rapplogic.xbee.xmpp.client.<A HREF="com/rapplogic/xbee/xmpp/client/XBeeGtalkClient.html" title="class in com.rapplogic.xbee.xmpp.client"><B>XBeeGtalkClient</B></A><LI TYPE="circle">com.rapplogic.xbee.xmpp.client.<A HREF="com/rapplogic/xbee/xmpp/client/XBeeOpenfireClient.html" title="class in com.rapplogic.xbee.xmpp.client"><B>XBeeOpenfireClient</B></A></UL>
+<LI TYPE="circle">com.rapplogic.xbee.xmpp.client.<A HREF="com/rapplogic/xbee/xmpp/client/XBeeXmppClient.html" title="class in com.rapplogic.xbee.xmpp.client"><B>XBeeXmppClient</B></A> (implements com.rapplogic.xbee.xmpp.client.<A HREF="com/rapplogic/xbee/xmpp/client/ConnectionSink.html" title="interface in com.rapplogic.xbee.xmpp.client">ConnectionSink</A>)
 <LI TYPE="circle">com.rapplogic.xbee.xmpp.gateway.<A HREF="com/rapplogic/xbee/xmpp/gateway/XBeeXmppGateway.html" title="class in com.rapplogic.xbee.xmpp.gateway"><B>XBeeXmppGateway</B></A> (implements com.rapplogic.xbee.api.PacketListener)
 <UL>
 <LI TYPE="circle">com.rapplogic.xbee.xmpp.gateway.<A HREF="com/rapplogic/xbee/xmpp/gateway/XBeeGtalkGateway.html" title="class in com.rapplogic.xbee.xmpp.gateway"><B>XBeeGtalkGateway</B></A><LI TYPE="circle">com.rapplogic.xbee.xmpp.gateway.<A HREF="com/rapplogic/xbee/xmpp/gateway/XBeeOpenfireGateway.html" title="class in com.rapplogic.xbee.xmpp.gateway"><B>XBeeOpenfireGateway</B></A></UL>
 </UL>
 </UL>
-<LI TYPE="circle">com.rapplogic.xbee.xmpp.<A HREF="com/rapplogic/xbee/xmpp/XBeeXmppUtil.html" title="class in com.rapplogic.xbee.xmpp"><B>XBeeXmppUtil</B></A></UL>
+<LI TYPE="circle">com.rapplogic.xbee.xmpp.<A HREF="com/rapplogic/xbee/xmpp/XBeeXmppUtil.html" title="class in com.rapplogic.xbee.xmpp"><B>XBeeXmppUtil</B></A><LI TYPE="circle">com.rapplogic.xbee.xmpp.client.<A HREF="com/rapplogic/xbee/xmpp/client/XmppXBeeConnection.html" title="class in com.rapplogic.xbee.xmpp.client"><B>XmppXBeeConnection</B></A> (implements com.rapplogic.xbee.XBeeConnection)
+</UL>
 </UL>
 <H2>
 Interface Hierarchy
 </H2>
 <UL>
-<LI TYPE="circle">com.rapplogic.xbee.xmpp.<A HREF="com/rapplogic/xbee/xmpp/PresenceListener.html" title="interface in com.rapplogic.xbee.xmpp"><B>PresenceListener</B></A></UL>
+<LI TYPE="circle">com.rapplogic.xbee.xmpp.client.<A HREF="com/rapplogic/xbee/xmpp/client/ConnectionSink.html" title="interface in com.rapplogic.xbee.xmpp.client"><B>ConnectionSink</B></A><LI TYPE="circle">com.rapplogic.xbee.xmpp.<A HREF="com/rapplogic/xbee/xmpp/PresenceListener.html" title="interface in com.rapplogic.xbee.xmpp"><B>PresenceListener</B></A></UL>
 <HR>
 
 

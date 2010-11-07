@@ -6,14 +6,15 @@
 XBeeXmppPacket
 </TITLE>
 
-<META NAME="keywords" CONTENT="com.rapplogic.xbee.xmpp.XBeeXmppPacket class">
 
 <LINK REL ="stylesheet" TYPE="text/css" HREF="../../../../stylesheet.css" TITLE="Style">
 
 <SCRIPT type="text/javascript">
 function windowTitle()
 {
-    parent.document.title="XBeeXmppPacket";
+    if (location.href.indexOf('is-external=true') == -1) {
+        parent.document.title="XBeeXmppPacket";
+    }
 }
 </SCRIPT>
 <NOSCRIPT>
@@ -22,6 +23,7 @@ function windowTitle()
 </HEAD>
 
 <BODY BGCOLOR="white" onload="windowTitle();">
+<HR>
 
 
 <!-- ========= START OF TOP NAVBAR ======= -->
@@ -144,7 +146,7 @@ Contains methods necessary for encoding/decoding of XBee packets over XMPP
 <TD><CODE><B><A HREF="../../../../com/rapplogic/xbee/xmpp/XBeeXmppPacket.html#decodeMessage(org.jivesoftware.smack.packet.Message)">decodeMessage</A></B>(org.jivesoftware.smack.packet.Message&nbsp;message)</CODE>
 
 <BR>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Extracts a packet from a smack message
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Extracts a packet (either a XBeeRequest or XBeeResponse) from a smack message
  Each message contains a packet formated in hex, e.g.</TD>
 </TR>
 <TR BGCOLOR="white" CLASS="TableRowColor">
@@ -271,7 +273,7 @@ decodeMessage</H3>
 protected int[] <B>decodeMessage</B>(org.jivesoftware.smack.packet.Message&nbsp;message)
                        throws <A HREF="../../../../com/rapplogic/xbee/xmpp/DecodeException.html" title="class in com.rapplogic.xbee.xmpp">DecodeException</A></PRE>
 <DL>
-<DD>Extracts a packet from a smack message
+<DD>Extracts a packet (either a XBeeRequest or XBeeResponse) from a smack message
  Each message contains a packet formated in hex, e.g. (001eff..)
 <P>
 <DD><DL>

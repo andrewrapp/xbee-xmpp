@@ -6,14 +6,15 @@
 XBeeXmppUtil
 </TITLE>
 
-<META NAME="keywords" CONTENT="com.rapplogic.xbee.xmpp.XBeeXmppUtil class">
 
 <LINK REL ="stylesheet" TYPE="text/css" HREF="../../../../stylesheet.css" TITLE="Style">
 
 <SCRIPT type="text/javascript">
 function windowTitle()
 {
-    parent.document.title="XBeeXmppUtil";
+    if (location.href.indexOf('is-external=true') == -1) {
+        parent.document.title="XBeeXmppUtil";
+    }
 }
 </SCRIPT>
 <NOSCRIPT>
@@ -22,6 +23,7 @@ function windowTitle()
 </HEAD>
 
 <BODY BGCOLOR="white" onload="windowTitle();">
+<HR>
 
 
 <!-- ========= START OF TOP NAVBAR ======= -->
@@ -130,7 +132,7 @@ java.lang.Object
 <TD><CODE><B><A HREF="../../../../com/rapplogic/xbee/xmpp/XBeeXmppUtil.html#convertHexStringToIntArray(java.lang.String)">convertHexStringToIntArray</A></B>(java.lang.String&nbsp;message)</CODE>
 
 <BR>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Extracts a packet from a smack message.</TD>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Extracts an XBeeResponse (client) or XBeeRequest (gateway) packet from a smack message.</TD>
 </TR>
 <TR BGCOLOR="white" CLASS="TableRowColor">
 <TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
@@ -288,7 +290,7 @@ convertHexStringToIntArray</H3>
 public static int[] <B>convertHexStringToIntArray</B>(java.lang.String&nbsp;message)
                                         throws <A HREF="../../../../com/rapplogic/xbee/xmpp/DecodeException.html" title="class in com.rapplogic.xbee.xmpp">DecodeException</A></PRE>
 <DL>
-<DD>Extracts a packet from a smack message.  Could be either an XBeeResponse or XBeeRequest
+<DD>Extracts an XBeeResponse (client) or XBeeRequest (gateway) packet from a smack message.  
  Each message contains a packet formated in hex, e.g. (001eff..)
 <P>
 <DD><DL>
