@@ -57,6 +57,7 @@ TODO provide bin, src, and examples distributions
 			srcdir="${src.dir}" 
 			failonerror="true">
 			<include name="*/**"/>
+			<exclude name="**/Private*.java"/>
 		</javac>
 	</target>
 
@@ -113,6 +114,7 @@ TODO provide bin, src, and examples distributions
 		<copy todir="${dist.dir}/src">
 			<fileset dir="src">
 				<exclude name="svn*"/>
+				<exclude name="**/Private*.java"/>
 			</fileset>
 		</copy>
 

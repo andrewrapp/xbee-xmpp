@@ -3,7 +3,7 @@
 <HTML>
 <HEAD>
 <TITLE>
-XBeeGtalkClient
+XmppXBeeConnection
 </TITLE>
 
 
@@ -13,7 +13,7 @@ XBeeGtalkClient
 function windowTitle()
 {
     if (location.href.indexOf('is-external=true') == -1) {
-        parent.document.title="XBeeGtalkClient";
+        parent.document.title="XmppXBeeConnection";
     }
 }
 </SCRIPT>
@@ -52,11 +52,11 @@ function windowTitle()
 
 <TR>
 <TD BGCOLOR="white" CLASS="NavBarCell2"><FONT SIZE="-2">
-&nbsp;<A HREF="../../../../../com/rapplogic/xbee/xmpp/client/GatewayOfflineException.html" title="class in com.rapplogic.xbee.xmpp.client"><B>PREV CLASS</B></A>&nbsp;
-&nbsp;<A HREF="../../../../../com/rapplogic/xbee/xmpp/client/XBeeOpenfireClient.html" title="class in com.rapplogic.xbee.xmpp.client"><B>NEXT CLASS</B></A></FONT></TD>
+&nbsp;<A HREF="../../../../../com/rapplogic/xbee/xmpp/client/XBeeXmppClient.html" title="class in com.rapplogic.xbee.xmpp.client"><B>PREV CLASS</B></A>&nbsp;
+&nbsp;NEXT CLASS</FONT></TD>
 <TD BGCOLOR="white" CLASS="NavBarCell2"><FONT SIZE="-2">
-  <A HREF="../../../../../index.html?com/rapplogic/xbee/xmpp/client/XBeeGtalkClient.html" target="_top"><B>FRAMES</B></A>  &nbsp;
-&nbsp;<A HREF="XBeeGtalkClient.html" target="_top"><B>NO FRAMES</B></A>  &nbsp;
+  <A HREF="../../../../../index.html?com/rapplogic/xbee/xmpp/client/XmppXBeeConnection.html" target="_top"><B>FRAMES</B></A>  &nbsp;
+&nbsp;<A HREF="XmppXBeeConnection.html" target="_top"><B>NO FRAMES</B></A>  &nbsp;
 &nbsp;<SCRIPT type="text/javascript">
   <!--
   if(window==top) {
@@ -87,22 +87,22 @@ DETAIL:&nbsp;FIELD&nbsp;|&nbsp;<A HREF="#constructor_detail">CONSTR</A>&nbsp;|&n
 <FONT SIZE="-1">
 com.rapplogic.xbee.xmpp.client</FONT>
 <BR>
-Class XBeeGtalkClient</H2>
+Class XmppXBeeConnection</H2>
 <PRE>
 java.lang.Object
-  <IMG SRC="../../../../../resources/inherit.gif" ALT="extended by ">com.rapplogic.xbee.api.XBee
-      <IMG SRC="../../../../../resources/inherit.gif" ALT="extended by "><B>com.rapplogic.xbee.xmpp.client.XBeeGtalkClient</B>
+  <IMG SRC="../../../../../resources/inherit.gif" ALT="extended by "><B>com.rapplogic.xbee.xmpp.client.XmppXBeeConnection</B>
 </PRE>
 <DL>
-<DT><B>All Implemented Interfaces:</B> <DD>com.rapplogic.xbee.api.IXBee</DD>
+<DT><B>All Implemented Interfaces:</B> <DD>com.rapplogic.xbee.XBeeConnection</DD>
 </DL>
 <HR>
 <DL>
-<DT><PRE>public class <B>XBeeGtalkClient</B><DT>extends com.rapplogic.xbee.api.XBee</DL>
+<DT><PRE>public class <B>XmppXBeeConnection</B><DT>extends java.lang.Object<DT>implements com.rapplogic.xbee.XBeeConnection</DL>
 </PRE>
 
 <P>
-Client implementation for Google Talk
+This is a bit of a misnomer as we are not connected to anything.  This class serves as a buffer
+ and provide input/output streams for xbee-api to use
 <P>
 
 <P>
@@ -123,7 +123,7 @@ Client implementation for Google Talk
 <B>Constructor Summary</B></FONT></TH>
 </TR>
 <TR BGCOLOR="white" CLASS="TableRowColor">
-<TD><CODE><B><A HREF="../../../../../com/rapplogic/xbee/xmpp/client/XBeeGtalkClient.html#XBeeGtalkClient()">XBeeGtalkClient</A></B>()</CODE>
+<TD><CODE><B><A HREF="../../../../../com/rapplogic/xbee/xmpp/client/XmppXBeeConnection.html#XmppXBeeConnection(com.rapplogic.xbee.xmpp.client.ConnectionSink)">XmppXBeeConnection</A></B>(<A HREF="../../../../../com/rapplogic/xbee/xmpp/client/ConnectionSink.html" title="interface in com.rapplogic.xbee.xmpp.client">ConnectionSink</A>&nbsp;sink)</CODE>
 
 <BR>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
@@ -141,15 +141,7 @@ Client implementation for Google Talk
 <TR BGCOLOR="white" CLASS="TableRowColor">
 <TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
 <CODE>&nbsp;void</CODE></FONT></TD>
-<TD><CODE><B><A HREF="../../../../../com/rapplogic/xbee/xmpp/client/XBeeGtalkClient.html#close()">close</A></B>()</CODE>
-
-<BR>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
-</TR>
-<TR BGCOLOR="white" CLASS="TableRowColor">
-<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
-<CODE>&nbsp;java.lang.Boolean</CODE></FONT></TD>
-<TD><CODE><B><A HREF="../../../../../com/rapplogic/xbee/xmpp/client/XBeeGtalkClient.html#isGatewayOnline()">isGatewayOnline</A></B>()</CODE>
+<TD><CODE><B><A HREF="../../../../../com/rapplogic/xbee/xmpp/client/XmppXBeeConnection.html#addPacket(int[])">addPacket</A></B>(int[]&nbsp;packet)</CODE>
 
 <BR>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
@@ -157,33 +149,26 @@ Client implementation for Google Talk
 <TR BGCOLOR="white" CLASS="TableRowColor">
 <TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
 <CODE>&nbsp;void</CODE></FONT></TD>
-<TD><CODE><B><A HREF="../../../../../com/rapplogic/xbee/xmpp/client/XBeeGtalkClient.html#open(java.lang.String, java.lang.Integer, java.lang.String, java.lang.String, java.lang.String)">open</A></B>(java.lang.String&nbsp;server,
-     java.lang.Integer&nbsp;port,
-     java.lang.String&nbsp;user,
-     java.lang.String&nbsp;password,
-     java.lang.String&nbsp;gateway)</CODE>
-
-<BR>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Establishes a connection to the XMPP Server</TD>
-</TR>
-<TR BGCOLOR="white" CLASS="TableRowColor">
-<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
-<CODE>&nbsp;void</CODE></FONT></TD>
-<TD><CODE><B><A HREF="../../../../../com/rapplogic/xbee/xmpp/client/XBeeGtalkClient.html#open(java.lang.String, java.lang.String, java.lang.String)">open</A></B>(java.lang.String&nbsp;user,
-     java.lang.String&nbsp;password,
-     java.lang.String&nbsp;gateway)</CODE>
+<TD><CODE><B><A HREF="../../../../../com/rapplogic/xbee/xmpp/client/XmppXBeeConnection.html#close()">close</A></B>()</CODE>
 
 <BR>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
 </TR>
-</TABLE>
-&nbsp;<A NAME="methods_inherited_from_class_com.rapplogic.xbee.api.XBee"><!-- --></A>
-<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
-<TR BGCOLOR="#EEEEFF" CLASS="TableSubHeadingColor">
-<TH ALIGN="left"><B>Methods inherited from class com.rapplogic.xbee.api.XBee</B></TH>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;java.io.InputStream</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../com/rapplogic/xbee/xmpp/client/XmppXBeeConnection.html#getInputStream()">getInputStream</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
 </TR>
 <TR BGCOLOR="white" CLASS="TableRowColor">
-<TD><CODE>addPacketListener, clearResponseQueue, getCurrentFrameId, getNextFrameId, getResponse, getResponse, initProviderConnection, isConnected, open, removePacketListener, sendAsynchronous, sendAtCommand, sendPacket, sendPacket, sendRequest, sendSynchronous, sendSynchronous, updateFrameId</CODE></TD>
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;java.io.OutputStream</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../com/rapplogic/xbee/xmpp/client/XmppXBeeConnection.html#getOutputStream()">getOutputStream</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
 </TR>
 </TABLE>
 &nbsp;<A NAME="methods_inherited_from_class_java.lang.Object"><!-- --></A>
@@ -208,10 +193,10 @@ Client implementation for Google Talk
 </TR>
 </TABLE>
 
-<A NAME="XBeeGtalkClient()"><!-- --></A><H3>
-XBeeGtalkClient</H3>
+<A NAME="XmppXBeeConnection(com.rapplogic.xbee.xmpp.client.ConnectionSink)"><!-- --></A><H3>
+XmppXBeeConnection</H3>
 <PRE>
-public <B>XBeeGtalkClient</B>()</PRE>
+public <B>XmppXBeeConnection</B>(<A HREF="../../../../../com/rapplogic/xbee/xmpp/client/ConnectionSink.html" title="interface in com.rapplogic.xbee.xmpp.client">ConnectionSink</A>&nbsp;sink)</PRE>
 <DL>
 </DL>
 
@@ -225,53 +210,19 @@ public <B>XBeeGtalkClient</B>()</PRE>
 </TR>
 </TABLE>
 
-<A NAME="open(java.lang.String, java.lang.String, java.lang.String)"><!-- --></A><H3>
-open</H3>
+<A NAME="addPacket(int[])"><!-- --></A><H3>
+addPacket</H3>
 <PRE>
-public void <B>open</B>(java.lang.String&nbsp;user,
-                 java.lang.String&nbsp;password,
-                 java.lang.String&nbsp;gateway)
-          throws org.jivesoftware.smack.XMPPException,
-                 com.rapplogic.xbee.api.XBeeException</PRE>
+public void <B>addPacket</B>(int[]&nbsp;packet)
+               throws java.io.IOException</PRE>
 <DL>
+<DD><DL>
+</DL>
+</DD>
 <DD><DL>
 
 <DT><B>Throws:</B>
-<DD><CODE>org.jivesoftware.smack.XMPPException</CODE>
-<DD><CODE>com.rapplogic.xbee.api.XBeeException</CODE></DL>
-</DD>
-</DL>
-<HR>
-
-<A NAME="open(java.lang.String, java.lang.Integer, java.lang.String, java.lang.String, java.lang.String)"><!-- --></A><H3>
-open</H3>
-<PRE>
-public void <B>open</B>(java.lang.String&nbsp;server,
-                 java.lang.Integer&nbsp;port,
-                 java.lang.String&nbsp;user,
-                 java.lang.String&nbsp;password,
-                 java.lang.String&nbsp;gateway)
-          throws org.jivesoftware.smack.XMPPException,
-                 com.rapplogic.xbee.api.XBeeException</PRE>
-<DL>
-<DD>Establishes a connection to the XMPP Server
-<P>
-<DD><DL>
-
-<DT><B>Throws:</B>
-<DD><CODE>org.jivesoftware.smack.XMPPException</CODE>
-<DD><CODE>com.rapplogic.xbee.api.XBeeException</CODE></DL>
-</DD>
-</DL>
-<HR>
-
-<A NAME="isGatewayOnline()"><!-- --></A><H3>
-isGatewayOnline</H3>
-<PRE>
-public java.lang.Boolean <B>isGatewayOnline</B>()</PRE>
-<DL>
-<DD><DL>
-</DL>
+<DD><CODE>java.io.IOException</CODE></DL>
 </DD>
 </DL>
 <HR>
@@ -282,7 +233,35 @@ close</H3>
 public void <B>close</B>()</PRE>
 <DL>
 <DD><DL>
-<DT><B>Specified by:</B><DD><CODE>close</CODE> in interface <CODE>com.rapplogic.xbee.api.IXBee</CODE><DT><B>Overrides:</B><DD><CODE>close</CODE> in class <CODE>com.rapplogic.xbee.api.XBee</CODE></DL>
+<DT><B>Specified by:</B><DD><CODE>close</CODE> in interface <CODE>com.rapplogic.xbee.XBeeConnection</CODE></DL>
+</DD>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="getInputStream()"><!-- --></A><H3>
+getInputStream</H3>
+<PRE>
+public java.io.InputStream <B>getInputStream</B>()</PRE>
+<DL>
+<DD><DL>
+<DT><B>Specified by:</B><DD><CODE>getInputStream</CODE> in interface <CODE>com.rapplogic.xbee.XBeeConnection</CODE></DL>
+</DD>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="getOutputStream()"><!-- --></A><H3>
+getOutputStream</H3>
+<PRE>
+public java.io.OutputStream <B>getOutputStream</B>()</PRE>
+<DL>
+<DD><DL>
+<DT><B>Specified by:</B><DD><CODE>getOutputStream</CODE> in interface <CODE>com.rapplogic.xbee.XBeeConnection</CODE></DL>
 </DD>
 <DD><DL>
 </DL>
@@ -318,11 +297,11 @@ public void <B>close</B>()</PRE>
 
 <TR>
 <TD BGCOLOR="white" CLASS="NavBarCell2"><FONT SIZE="-2">
-&nbsp;<A HREF="../../../../../com/rapplogic/xbee/xmpp/client/GatewayOfflineException.html" title="class in com.rapplogic.xbee.xmpp.client"><B>PREV CLASS</B></A>&nbsp;
-&nbsp;<A HREF="../../../../../com/rapplogic/xbee/xmpp/client/XBeeOpenfireClient.html" title="class in com.rapplogic.xbee.xmpp.client"><B>NEXT CLASS</B></A></FONT></TD>
+&nbsp;<A HREF="../../../../../com/rapplogic/xbee/xmpp/client/XBeeXmppClient.html" title="class in com.rapplogic.xbee.xmpp.client"><B>PREV CLASS</B></A>&nbsp;
+&nbsp;NEXT CLASS</FONT></TD>
 <TD BGCOLOR="white" CLASS="NavBarCell2"><FONT SIZE="-2">
-  <A HREF="../../../../../index.html?com/rapplogic/xbee/xmpp/client/XBeeGtalkClient.html" target="_top"><B>FRAMES</B></A>  &nbsp;
-&nbsp;<A HREF="XBeeGtalkClient.html" target="_top"><B>NO FRAMES</B></A>  &nbsp;
+  <A HREF="../../../../../index.html?com/rapplogic/xbee/xmpp/client/XmppXBeeConnection.html" target="_top"><B>FRAMES</B></A>  &nbsp;
+&nbsp;<A HREF="XmppXBeeConnection.html" target="_top"><B>NO FRAMES</B></A>  &nbsp;
 &nbsp;<SCRIPT type="text/javascript">
   <!--
   if(window==top) {
