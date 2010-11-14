@@ -46,21 +46,9 @@ public class XBeeXmppClientExample {
 		// the gateway may be online, but we haven't received the online event.. wait a bit to get presence event
 		long start = System.currentTimeMillis();
 		
-		while (!client.isGatewayOnline()) {
-			log.debug("Waiting for Gateway online presence");
-			try {
-				Thread.sleep(100);
-			} catch (InterruptedException e) { }
-			
-			if ((System.currentTimeMillis() - start) > 5000) {
-				break;
-			}
-		}
-		
-		if (client.isGatewayOnline()) {
-			log.debug("Gateway is online!");	
-		} else {
-			throw new RuntimeException("Gateway is not online!");
+		if (!client.waitForGatewayOnline(5000)) {
+			log.error("Failed to connect to gateway");
+			return;
 		}
 		
 		// get association status

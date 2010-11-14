@@ -59,17 +59,12 @@ public class XBeeXmppClientRemoteAtExample {
 			// using gtalk
 			client = new XBeeGtalkClient();
 			client.open("xbeeclient@gmail.com", "password", "xbeegateway@gmail.com");
-			
-			// gateway may be online, but we haven't received the online event.. wait a bit to get presence event
-			long start = System.currentTimeMillis();
-			while (!client.isGatewayOnline()) {
-				Thread.sleep(100);
-				log.debug("waiting");
-				
-				if ((System.currentTimeMillis() - start) > 5000) {
-					break;
-				}
+
+			if (!client.waitForGatewayOnline(5000)) {
+				log.error("Failed to connect to gateway");
+				return;
 			}
+			
 			// use remote at to configure an end device for i/o sampling
 			
 			// replace with SH + SL of your end device
