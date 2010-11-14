@@ -89,7 +89,7 @@ public class XmppXBeeConnection implements XBeeConnection {
 		if (wasEmpty) {
 			// critical: notify XBee that data is available
 			synchronized(this) {
-				log.debug("Notifying any XBee input stream thread that new data is available");
+				log.debug("Notifying the XBee input stream thread that new data is available");
 				this.notify();
 			}			
 		}

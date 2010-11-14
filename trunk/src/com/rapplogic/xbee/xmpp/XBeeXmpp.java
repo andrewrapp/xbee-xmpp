@@ -38,6 +38,8 @@ import org.jivesoftware.smack.packet.Presence;
 import org.jivesoftware.smack.packet.RosterPacket;
 
 import com.rapplogic.xbee.api.PacketListener;
+import com.rapplogic.xbee.api.XBee;
+import com.rapplogic.xbee.api.XBeeConfiguration;
 
 /**
  * Includes common functionality for gateways and clients.
@@ -51,7 +53,7 @@ import com.rapplogic.xbee.api.PacketListener;
  * instead messages will echo back to processMessage
  * 
  */
-public abstract class XBeeXmpp implements MessageListener, RosterListener {
+public abstract class XBeeXmpp extends XBee implements MessageListener, RosterListener {
 	
 	 //TODO add error listener
 	 //TODO receive connection failure events
@@ -79,7 +81,15 @@ public abstract class XBeeXmpp implements MessageListener, RosterListener {
 	
 	private boolean offlineMessages = false;
 
-	public XBeeXmpp(String server, Integer port, String user, String password) {
+	public XBeeXmpp() {
+	
+	}
+	
+	public XBeeXmpp(XBeeConfiguration conf) {
+		super(conf);
+	}
+	
+	public void init(String server, Integer port, String user, String password) {
 		if ((server != null && port == null) || (port != null && server == null)) {
 			throw new IllegalArgumentException("either both server and port must be specified or neither");
 		}
@@ -87,15 +97,7 @@ public abstract class XBeeXmpp implements MessageListener, RosterListener {
 		this.setServer(server);
 		this.setPort(port);
 		this.setUser(user);
-		this.setPassword(password);	
-	}
-	
-	public void addPacketListener(PacketListener listener) {
-		listeners.add(listener);
-	}
-	
-	protected List<PacketListener> getPacketListeners() {
-		return listeners;
+		this.setPassword(password);		
 	}
 	
 	public void addPresenceListener(PresenceListener listener) { 
@@ -322,7 +324,7 @@ public abstract class XBeeXmpp implements MessageListener, RosterListener {
 	 * @throws XMPPException
 	 * Jan 24, 2009
 	 */
-    public void initXmpp() throws XMPPException {
+    public void connectXmpp() throws XMPPException {
     	synchronized (this) {
     		XMPPConnection conn = this.connect();
     		

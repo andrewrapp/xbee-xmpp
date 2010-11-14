@@ -72,38 +72,8 @@ public class XBeeGtalkGateway extends XBeeXmppGateway {
 	 * @throws XMPPException
 	 * @throws XBeeException
 	 */
-	public XBeeGtalkGateway(String server, Integer port, String user, String password, List<String> clientList, String comPort, int baudRate) throws XMPPException, XBeeException {
-		super(server, port, user, password, clientList, comPort, baudRate);
-	}
-
-	/**
-	 * Creates a Google Talk gateway with the supplied arguments
-	 * 
-	 * @param user
-	 * @param password
-	 * @param clientList
-	 * @param comPort
-	 * @param baudRate
-	 * @throws XMPPException
-	 * @throws XBeeException
-	 */
-	public XBeeGtalkGateway(String user, String password, List<String> clientList, String comPort, int baudRate) throws XMPPException, XBeeException {
-		super(null, null, user, password, clientList, comPort, baudRate);
-	}
-
-	/**
-	 * Creates a Google Talk gateway with an existing XBee object.  
-	 * You must call xbee.open(...) prior to calling this constructor
-	 * 
-	 * @param user
-	 * @param password
-	 * @param clientList
-	 * @param xbee
-	 * @throws XMPPException
-	 * @throws XBeeException
-	 */
-	public XBeeGtalkGateway(String user, String password, List<String> clientList, XBee xbee) throws XMPPException, XBeeException {
-		super(null, null, user, password, clientList, xbee);
+	public XBeeGtalkGateway() {
+		
 	}
 	
 	protected XMPPConnection connect() throws XMPPException {

@@ -35,49 +35,27 @@ import com.rapplogic.xbee.xmpp.XBeeGtalkCommon;
  * @author andrew
  *
  */
-public class XBeeGtalkClient extends XBee {
+public class XBeeGtalkClient extends XBeeXmppClient {
 
 	private final static Logger log = Logger.getLogger(XBeeGtalkClient.class);
 		
 	private XBeeXmppClient xmpp;
 	
 	public XBeeGtalkClient() {
-		super(new XBeeConfiguration().withStartupChecks(false));		
+		super();
 	}
 	
-	public void open(String user, String password, String gateway) throws XMPPException, XBeeException {
-		this.open(null, null, user, password, gateway);
+	public XBeeGtalkClient(XBeeConfiguration conf) {
+		super(conf);
 	}
-	
-	/**
-	 * Establishes a connection to the XMPP Server
-	 * 
-	 * @throws XMPPException
-	 * @throws XBeeException 
-	 */
-	public void open(String server, Integer port, String user, String password, String gateway) throws XMPPException, XBeeException {
-		xmpp = new XBeeXmppClient(this, server, port, user, password, gateway) {
 
-			@Override
-			protected XMPPConnection connect() throws XMPPException {
-				return XBeeGtalkCommon.connect(this.getServer(), this.getPort(), this.getUser(), this.getPassword());
-			}
-
-			@Override
-			protected boolean isAvailable(Presence presence) {
-				return XBeeGtalkCommon.isAvailable(presence);
-			}
-
-		};
-		
-		xmpp.start();			
+	@Override
+	protected XMPPConnection connect() throws XMPPException {
+		return XBeeGtalkCommon.connect(this.getServer(), this.getPort(), this.getUser(), this.getPassword());
 	}
-	
-	public Boolean isGatewayOnline() {
-		return xmpp.isGatewayOnline();
-	}
-	
-	public void close() {
-		xmpp.close();
+
+	@Override
+	protected boolean isAvailable(Presence presence) {
+		return XBeeGtalkCommon.isAvailable(presence);
 	}
 }

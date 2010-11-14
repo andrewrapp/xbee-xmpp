@@ -38,7 +38,7 @@ import com.rapplogic.xbee.xmpp.XBeeOpenfireCommon;
  * @author andrew
  *
  */
-public class XBeeOpenfireClient extends XBee {
+public class XBeeOpenfireClient extends XBeeXmppClient {
 
 	private final static Logger log = Logger.getLogger(XBeeOpenfireClient.class);
 
@@ -48,35 +48,17 @@ public class XBeeOpenfireClient extends XBee {
 		super(new XBeeConfiguration().withStartupChecks(false));
 	}
 
-	/**
-	 * Establishes a connection to the XMPP Server
-	 * 
-	 * @throws XMPPException
-	 * @throws XBeeException 
-	 */
-	public void open(String server, int port, String user, String password, String gateway) throws XMPPException, XBeeException {
-		xmpp = new XBeeXmppClient(this, server, port, user, password, gateway) {
+	@Override
+	protected XMPPConnection connect() throws XMPPException {
+		return XBeeOpenfireCommon.connect(this.getServer(), this.getPort(), this.getUser(), this.getPassword());
+	}
 
-			@Override
-			protected XMPPConnection connect() throws XMPPException {
-				return XBeeOpenfireCommon.connect(this.getServer(), this.getPort(), this.getUser(), this.getPassword());
-			}
-
-			@Override
-			protected boolean isAvailable(Presence presence) {
-				return XBeeOpenfireCommon.isAvailable(presence);
-			}
-
-		};
-		
-		xmpp.start();			
+	@Override
+	protected boolean isAvailable(Presence presence) {
+		return XBeeOpenfireCommon.isAvailable(presence);
 	}
 	
 	public Boolean isGatewayOnline() {
 		return xmpp.isGatewayOnline();
-	}
-	
-	public void close() {
-		xmpp.close();
 	}	
 }

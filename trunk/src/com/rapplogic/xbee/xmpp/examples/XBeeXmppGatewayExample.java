@@ -25,6 +25,7 @@ import java.util.List;
 import org.apache.log4j.PropertyConfigurator;
 import org.jivesoftware.smack.XMPPException;
 
+import com.rapplogic.xbee.api.XBee;
 import com.rapplogic.xbee.api.XBeeException;
 import com.rapplogic.xbee.xmpp.gateway.XBeeGtalkGateway;
 import com.rapplogic.xbee.xmpp.gateway.XBeeXmppGateway;
@@ -51,9 +52,8 @@ public class XBeeXmppGatewayExample {
 		// using openfire.  use coordinator com port
 		//gateway = new XBeeOpenfireGateway("localhost", 5222, "xbeegateway", "xbeegateway", clientList, "/dev/tty.usbserial-A6005v5M", 9600);
 		// using google talk
-		gateway = new XBeeGtalkGateway("xbeegateway@gmail.com", "password", clientList, "/dev/tty.usbserial-A6005v5M", 9600);
-		
-		gateway.start();
+		gateway = new XBeeGtalkGateway();
+		gateway.open("xbeegateway@gmail.com", "password", clientList, "/dev/tty.usbserial-A6005v5M", 9600);
 	}
 	
 	public static void main(String[] args) throws XMPPException, InterruptedException, XBeeException {
