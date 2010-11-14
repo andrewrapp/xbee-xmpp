@@ -22,6 +22,7 @@ package com.rapplogic.xbee.xmpp;
 import org.apache.log4j.Logger;
 import org.jivesoftware.smack.packet.Message;
 
+import com.rapplogic.xbee.api.XBeeConfiguration;
 import com.rapplogic.xbee.api.XBeeRequest;
 import com.rapplogic.xbee.api.XBeeResponse;
 
@@ -32,8 +33,12 @@ public abstract class XBeeXmppPacket extends XBeeXmpp {
 
 	private final static Logger log = Logger.getLogger(XBeeXmppPacket.class);
 	
-	public XBeeXmppPacket(String server, Integer port, String user, String password) {
-		super(server, port, user, password);
+	public XBeeXmppPacket() {
+
+	}
+
+	public XBeeXmppPacket(XBeeConfiguration conf) {
+		super(conf);
 	}
 	
     protected Message encodeMessage(XBeeResponse response) {

@@ -66,22 +66,6 @@ public abstract class XBeeXmppGateway extends XBeeXmppPacket implements PacketLi
 	
 	private boolean packetListener;
 	
-	public String getComPort() {
-		return comPort;
-	}
-
-	public void setComPort(String comPort) {
-		this.comPort = comPort;
-	}
-
-	public int getBaudRate() {
-		return baudRate;
-	}
-
-	public void setBaudRate(int baudRate) {
-		this.baudRate = baudRate;
-	}
-
 	/**
 	 * 
 	 * @param server
@@ -94,18 +78,10 @@ public abstract class XBeeXmppGateway extends XBeeXmppPacket implements PacketLi
 	 * @throws XMPPException
 	 * @throws XBeeException
 	 */
-	public XBeeXmppGateway(String server, Integer port, String user, String password, List<String> clientList, String comPort, int baudRate) throws XMPPException, XBeeException {
-		super(server, port, user, password);
-		
-		if (clientList == null || clientList.size() == 0) {
-			throw new IllegalArgumentException("client list is null or empty.  you must provide at least one client");
-		}
-		
-		this.setClientList(clientList);
-		this.setComPort(comPort);
-		this.setBaudRate(baudRate);
-	}
+	public XBeeXmppGateway() {
 
+	}
+	
 	/**
 	 * Creates a gateway with an existing XBee object
 	 * 
@@ -118,12 +94,39 @@ public abstract class XBeeXmppGateway extends XBeeXmppPacket implements PacketLi
 	 * @throws XMPPException
 	 * @throws XBeeException
 	 */
-	public XBeeXmppGateway(String server, Integer port, String user, String password, List<String> clientList, XBee xbee) throws XMPPException, XBeeException {
-		super(server, port, user, password);
+	public void open(String server, Integer port, String user, String password, List<String> clientList, XBee xbee) throws XMPPException, XBeeException {
+		this.openInternal(server, port, user, password, clientList, xbee, null, 0);
+	}
+
+	public void open(String user, String password, List<String> clientList, XBee xbee) throws XMPPException, XBeeException {
+		this.openInternal(null, null, user, password, clientList, xbee, null, 0);
+	}
+
+	public void open(String server, Integer port, String user, String password, List<String> clientList, String comPort, int baud) throws XMPPException, XBeeException {
+		this.openInternal(server, port, user, password, clientList, null, comPort, baud);
+	}
+	
+	public void open(String user, String password, List<String> clientList, String comPort, int baud) throws XMPPException, XBeeException {
+		this.openInternal(null, null, user, password, clientList, null, comPort, baud);
+	}
+
+	private void openInternal(String server, Integer port, String user, String password, List<String> clientList, XBee xbee, String comPort, int baud) throws XMPPException, XBeeException {
+		super.init(server, port, user, password);
+
+		if (clientList == null || clientList.size() == 0) {
+			throw new IllegalArgumentException("client list is null or empty.  you must provide at least one client");
+		}
+		
 		this.setClientList(clientList);
-		this.setComPort(comPort);
-		this.setBaudRate(baudRate);
+		
+		if (comPort != null) {
+			this.setComPort(comPort);
+			this.setBaudRate(baud);			
+		}
+
 		this.xbee = xbee;
+		
+		this.start();
 	}
 	
 	/**
@@ -134,7 +137,7 @@ public abstract class XBeeXmppGateway extends XBeeXmppPacket implements PacketLi
 	 * @throws XMPPException
 	 * @throws XBeeException
 	 */
-	public void start() throws XMPPException, XBeeException {	
+	private void start() throws XMPPException, XBeeException {	
 		if (xbee == null) {
 			// xbee was not passed in.  create
 			xbee = new XBee();	
@@ -150,7 +153,7 @@ public abstract class XBeeXmppGateway extends XBeeXmppPacket implements PacketLi
 			packetListener = true;
 		}
 		
-		this.initXmpp();
+		this.connectXmpp();
 		
 		if (packetListener) {
 			xbee.addPacketListener(this);	
@@ -310,4 +313,20 @@ public abstract class XBeeXmppGateway extends XBeeXmppPacket implements PacketLi
 	public void handleUndeliverableClient(XBeeResponse response, String client) {
 		
 	}
+	
+	public String getComPort() {
+		return comPort;
+	}
+
+	public void setComPort(String comPort) {
+		this.comPort = comPort;
+	}
+
+	public int getBaudRate() {
+		return baudRate;
+	}
+
+	public void setBaudRate(int baudRate) {
+		this.baudRate = baudRate;
+	}	
 }

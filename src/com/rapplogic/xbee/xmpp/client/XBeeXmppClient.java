@@ -27,7 +27,8 @@ import org.jivesoftware.smack.Chat;
 import org.jivesoftware.smack.XMPPException;
 import org.jivesoftware.smack.packet.Message;
 
-import com.rapplogic.xbee.api.XBee;
+import com.rapplogic.xbee.XBeeConnection;
+import com.rapplogic.xbee.api.XBeeConfiguration;
 import com.rapplogic.xbee.api.XBeeException;
 import com.rapplogic.xbee.api.XBeePacket;
 import com.rapplogic.xbee.util.ByteUtils;
@@ -55,12 +56,37 @@ public abstract class XBeeXmppClient extends XBeeXmppPacket implements Connectio
 	private String gateway;
 		
 	private XmppXBeeConnection connection;
-	private XBee xbee;
 	
-	public XBeeXmppClient(XBee xbee, String server, Integer port, String user, String password, String gateway) {
-		super(server, port, user, password);
-		this.setGateway(gateway);	
-		this.xbee = xbee;
+	public XBeeXmppClient() {
+		super(new XBeeConfiguration().withStartupChecks(false));
+	}
+
+	public XBeeXmppClient(XBeeConfiguration conf) {
+		super(conf.withStartupChecks(false));
+	}
+	
+	public void open(String user, String password, String gateway) throws XMPPException, XBeeException {
+		this.open(null, null, user, password, gateway);
+	}
+	
+	public void open(String server, Integer port, String user, String password, String gateway) throws XMPPException, XBeeException {
+		super.init(server, port, user, password);
+		this.setGateway(gateway);
+		
+		synchronized (this) {
+
+			// default gateway to offline incase they are not in roster
+			this.getPresenceMap().put(this.getGateway(), Boolean.FALSE);
+			
+			this.connectXmpp();
+		}		
+		
+		connection = new XmppXBeeConnection(this);
+		this.initProviderConnection(connection);
+	}
+	
+	public void open(String port, int speed) {
+		throw new UnsupportedOperationException("Clients cannot connect via serial");
 	}
 	
 	public Boolean isGatewayOnline() {
@@ -73,25 +99,6 @@ public abstract class XBeeXmppClient extends XBeeXmppPacket implements Connectio
 
 	public void setGateway(String gateway) {
 		this.gateway = gateway;
-	}
-
-	/**
-	 * Establishes a connection to the XMPP Server
-	 * 
-	 * @throws XMPPException
-	 * @throws XBeeException 
-	 */
-	public void start() throws XMPPException, XBeeException {
-		synchronized (this) {
-
-			// default gateway to offline incase they are not in roster
-			this.getPresenceMap().put(this.getGateway(), Boolean.FALSE);
-			
-			this.initXmpp();
-		}		
-		
-		connection = new XmppXBeeConnection(this);
-		xbee.initProviderConnection(connection);
 	}
 
     public void processMessage(Chat chat, Message message) {
@@ -142,16 +149,21 @@ public abstract class XBeeXmppClient extends XBeeXmppPacket implements Connectio
     
 	public void close() {
 		try {
-			if (this.getConnection() != null) {
-				this.getConnection().disconnect();			
+			if (this.isConnected()) {
+				super.close();	
 			}
 			
-			xbee.close();
+			if (this.getConnection() != null) {
+				log.info("Disconnecting XMPP Connection");
+				this.getConnection().disconnect();			
+			}
 		} catch (Exception e) {
 			log.error("failed to disconnect connection", e);
 		}
 		
-		this.connection.close();
+		// Call close on XBeeConnection impl
+		// This is unnecessary because the connection is to XMPP
+		((XBeeConnection)this.connection).close();
 	}
 
     protected List<String> getRosterList() {
@@ -170,4 +182,23 @@ public abstract class XBeeXmppClient extends XBeeXmppPacket implements Connectio
 	public Chat getChat() {
 		return this.getChatMap().get(this.getGateway());
 	}
+	
+	public boolean waitForGatewayOnline(int wait) {
+		log.info("waiting for gateway...");
+		
+		long start = System.currentTimeMillis();
+		
+		while (!this.isGatewayOnline()) {
+			try {
+				Thread.sleep(100);
+			} catch (InterruptedException e) {
+			}
+			
+			if ((System.currentTimeMillis() - start) > wait) {
+				break;
+			}
+		}
+		
+		return this.isGatewayOnline(); 
+	}	
 }

@@ -55,6 +55,8 @@ TODO provide bin, src, and examples distributions
 			debug="true" 
 			destdir="${build.dir}" 
 			srcdir="${src.dir}" 
+			source="1.5"
+			target="1.5" 
 			failonerror="true">
 			<include name="*/**"/>
 			<exclude name="**/Private*.java"/>

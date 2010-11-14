@@ -44,25 +44,8 @@ public class XBeeOpenfireGateway extends XBeeXmppGateway {
 	// The servername is generally not necessarily the same
 	// as the server host name.  You can find servername in the server properties, in the openfire admin console.
 
-	public XBeeOpenfireGateway(String server, int port, String user, String password, List<String> clientList, String comPort, int baudRate) throws XMPPException, XBeeException {
-		super(server, port, user, password, clientList, comPort, baudRate);
-	}
-
-	/**
-	 * Creates an Openfire gateway with an existing XBee object.  
-	 * You must call xbee.open(...) prior to calling this constructor
-	 * 
-	 * @param server
-	 * @param port
-	 * @param user
-	 * @param password
-	 * @param clientList
-	 * @param xbee
-	 * @throws XMPPException
-	 * @throws XBeeException
-	 */
-	public XBeeOpenfireGateway(String server, int port, String user, String password, List<String> clientList, XBee xbee) throws XMPPException, XBeeException {
-		super(server, port, user, password, clientList, xbee);
+	public XBeeOpenfireGateway() {
+		
 	}
 	
 	protected XMPPConnection connect() throws XMPPException {
