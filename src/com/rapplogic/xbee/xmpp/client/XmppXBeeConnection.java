@@ -13,7 +13,7 @@ import com.rapplogic.xbee.util.ByteUtils;
 
 /**
  * This is a bit of a misnomer as we are not connected to anything.  This class serves as a buffer
- * and provide input/output streams for xbee-api to use
+ * and provides input/output streams for xbee-api to use
  * 
  * @author andrew
  *
@@ -50,18 +50,22 @@ public class XmppXBeeConnection implements XBeeConnection {
 				throw new IOException("Nothing to write!");
 			}
 			
-			// write all avail. bytes to sink
-			int[] packet = new int[outPosition];
-			System.arraycopy(outputBuffer, 0, packet, 0, outPosition);
-			
 			try {
-				sink.send(packet);	
-			} catch (Exception e) {
-				throw new IOException("Failed to send packet to XBee", e);
+				// write all avail. bytes to sink
+				int[] packet = new int[outPosition];
+				System.arraycopy(outputBuffer, 0, packet, 0, outPosition);
+				
+				log.debug("Buffer position is " + outPosition + ", sending packet: " + ByteUtils.toBase16(packet));
+				
+				try {
+					sink.send(packet);	
+				} catch (Exception e) {
+					throw new IOException("Failed to send packet to XBee", e);
+				}				
+			} finally {
+				// we don't retry packets on error so reset out pos and discard packet
+				outPosition = 0;				
 			}
-			
-			//reset out pos
-			outPosition = 0;
 		}
 	};
 	

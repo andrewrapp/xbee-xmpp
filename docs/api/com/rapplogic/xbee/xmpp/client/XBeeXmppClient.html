@@ -90,12 +90,16 @@ com.rapplogic.xbee.xmpp.client</FONT>
 Class XBeeXmppClient</H2>
 <PRE>
 java.lang.Object
-  <IMG SRC="../../../../../resources/inherit.gif" ALT="extended by "><A HREF="../../../../../com/rapplogic/xbee/xmpp/XBeeXmpp.html" title="class in com.rapplogic.xbee.xmpp">com.rapplogic.xbee.xmpp.XBeeXmpp</A>
-      <IMG SRC="../../../../../resources/inherit.gif" ALT="extended by "><A HREF="../../../../../com/rapplogic/xbee/xmpp/XBeeXmppPacket.html" title="class in com.rapplogic.xbee.xmpp">com.rapplogic.xbee.xmpp.XBeeXmppPacket</A>
-          <IMG SRC="../../../../../resources/inherit.gif" ALT="extended by "><B>com.rapplogic.xbee.xmpp.client.XBeeXmppClient</B>
+  <IMG SRC="../../../../../resources/inherit.gif" ALT="extended by ">com.rapplogic.xbee.api.XBee
+      <IMG SRC="../../../../../resources/inherit.gif" ALT="extended by "><A HREF="../../../../../com/rapplogic/xbee/xmpp/XBeeXmpp.html" title="class in com.rapplogic.xbee.xmpp">com.rapplogic.xbee.xmpp.XBeeXmpp</A>
+          <IMG SRC="../../../../../resources/inherit.gif" ALT="extended by "><A HREF="../../../../../com/rapplogic/xbee/xmpp/XBeeXmppPacket.html" title="class in com.rapplogic.xbee.xmpp">com.rapplogic.xbee.xmpp.XBeeXmppPacket</A>
+              <IMG SRC="../../../../../resources/inherit.gif" ALT="extended by "><B>com.rapplogic.xbee.xmpp.client.XBeeXmppClient</B>
 </PRE>
 <DL>
-<DT><B>All Implemented Interfaces:</B> <DD><A HREF="../../../../../com/rapplogic/xbee/xmpp/client/ConnectionSink.html" title="interface in com.rapplogic.xbee.xmpp.client">ConnectionSink</A>, org.jivesoftware.smack.MessageListener, org.jivesoftware.smack.RosterListener</DD>
+<DT><B>All Implemented Interfaces:</B> <DD>com.rapplogic.xbee.api.IXBee, <A HREF="../../../../../com/rapplogic/xbee/xmpp/client/ConnectionSink.html" title="interface in com.rapplogic.xbee.xmpp.client">ConnectionSink</A>, org.jivesoftware.smack.MessageListener</DD>
+</DL>
+<DL>
+<DT><B>Direct Known Subclasses:</B> <DD><A HREF="../../../../../com/rapplogic/xbee/xmpp/client/XBeeGtalkClient.html" title="class in com.rapplogic.xbee.xmpp.client">XBeeGtalkClient</A>, <A HREF="../../../../../com/rapplogic/xbee/xmpp/client/XBeeOpenfireClient.html" title="class in com.rapplogic.xbee.xmpp.client">XBeeOpenfireClient</A></DD>
 </DL>
 <HR>
 <DL>
@@ -133,12 +137,13 @@ Provides communication with an XBee radio over XMPP.
 <B>Constructor Summary</B></FONT></TH>
 </TR>
 <TR BGCOLOR="white" CLASS="TableRowColor">
-<TD><CODE><B><A HREF="../../../../../com/rapplogic/xbee/xmpp/client/XBeeXmppClient.html#XBeeXmppClient(com.rapplogic.xbee.api.XBee, java.lang.String, java.lang.Integer, java.lang.String, java.lang.String, java.lang.String)">XBeeXmppClient</A></B>(com.rapplogic.xbee.api.XBee&nbsp;xbee,
-               java.lang.String&nbsp;server,
-               java.lang.Integer&nbsp;port,
-               java.lang.String&nbsp;user,
-               java.lang.String&nbsp;password,
-               java.lang.String&nbsp;gateway)</CODE>
+<TD><CODE><B><A HREF="../../../../../com/rapplogic/xbee/xmpp/client/XBeeXmppClient.html#XBeeXmppClient()">XBeeXmppClient</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD><CODE><B><A HREF="../../../../../com/rapplogic/xbee/xmpp/client/XBeeXmppClient.html#XBeeXmppClient(com.rapplogic.xbee.api.XBeeConfiguration)">XBeeXmppClient</A></B>(com.rapplogic.xbee.api.XBeeConfiguration&nbsp;conf)</CODE>
 
 <BR>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
@@ -183,13 +188,43 @@ Provides communication with an XBee radio over XMPP.
 <TD><CODE><B><A HREF="../../../../../com/rapplogic/xbee/xmpp/client/XBeeXmppClient.html#getRosterList()">getRosterList</A></B>()</CODE>
 
 <BR>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;In order to curtail spam/unsolicited messages,
- XMPP devised a subscription/invitation model.</TD>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
 </TR>
 <TR BGCOLOR="white" CLASS="TableRowColor">
 <TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
 <CODE>&nbsp;java.lang.Boolean</CODE></FONT></TD>
 <TD><CODE><B><A HREF="../../../../../com/rapplogic/xbee/xmpp/client/XBeeXmppClient.html#isGatewayOnline()">isGatewayOnline</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../com/rapplogic/xbee/xmpp/client/XBeeXmppClient.html#open(java.lang.String, int)">open</A></B>(java.lang.String&nbsp;port,
+     int&nbsp;speed)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../com/rapplogic/xbee/xmpp/client/XBeeXmppClient.html#open(java.lang.String, java.lang.Integer, java.lang.String, java.lang.String, java.lang.String)">open</A></B>(java.lang.String&nbsp;server,
+     java.lang.Integer&nbsp;port,
+     java.lang.String&nbsp;user,
+     java.lang.String&nbsp;password,
+     java.lang.String&nbsp;gateway)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../com/rapplogic/xbee/xmpp/client/XBeeXmppClient.html#open(java.lang.String, java.lang.String, java.lang.String)">open</A></B>(java.lang.String&nbsp;user,
+     java.lang.String&nbsp;password,
+     java.lang.String&nbsp;gateway)</CODE>
 
 <BR>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
@@ -221,11 +256,11 @@ Provides communication with an XBee radio over XMPP.
 </TR>
 <TR BGCOLOR="white" CLASS="TableRowColor">
 <TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
-<CODE>&nbsp;void</CODE></FONT></TD>
-<TD><CODE><B><A HREF="../../../../../com/rapplogic/xbee/xmpp/client/XBeeXmppClient.html#start()">start</A></B>()</CODE>
+<CODE>&nbsp;boolean</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../com/rapplogic/xbee/xmpp/client/XBeeXmppClient.html#waitForGatewayOnline(int)">waitForGatewayOnline</A></B>(int&nbsp;wait)</CODE>
 
 <BR>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Establishes a connection to the XMPP Server</TD>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
 </TR>
 </TABLE>
 &nbsp;<A NAME="methods_inherited_from_class_com.rapplogic.xbee.xmpp.XBeeXmppPacket"><!-- --></A>
@@ -243,7 +278,16 @@ Provides communication with an XBee radio over XMPP.
 <TH ALIGN="left"><B>Methods inherited from class com.rapplogic.xbee.xmpp.<A HREF="../../../../../com/rapplogic/xbee/xmpp/XBeeXmpp.html" title="class in com.rapplogic.xbee.xmpp">XBeeXmpp</A></B></TH>
 </TR>
 <TR BGCOLOR="white" CLASS="TableRowColor">
-<TD><CODE><A HREF="../../../../../com/rapplogic/xbee/xmpp/XBeeXmpp.html#addPacketListener(com.rapplogic.xbee.api.PacketListener)">addPacketListener</A>, <A HREF="../../../../../com/rapplogic/xbee/xmpp/XBeeXmpp.html#addPresenceListener(com.rapplogic.xbee.xmpp.PresenceListener)">addPresenceListener</A>, <A HREF="../../../../../com/rapplogic/xbee/xmpp/XBeeXmpp.html#connect()">connect</A>, <A HREF="../../../../../com/rapplogic/xbee/xmpp/XBeeXmpp.html#entriesAdded(java.util.Collection)">entriesAdded</A>, <A HREF="../../../../../com/rapplogic/xbee/xmpp/XBeeXmpp.html#entriesDeleted(java.util.Collection)">entriesDeleted</A>, <A HREF="../../../../../com/rapplogic/xbee/xmpp/XBeeXmpp.html#entriesUpdated(java.util.Collection)">entriesUpdated</A>, <A HREF="../../../../../com/rapplogic/xbee/xmpp/XBeeXmpp.html#getChatMap()">getChatMap</A>, <A HREF="../../../../../com/rapplogic/xbee/xmpp/XBeeXmpp.html#getConnection()">getConnection</A>, <A HREF="../../../../../com/rapplogic/xbee/xmpp/XBeeXmpp.html#getPacketListeners()">getPacketListeners</A>, <A HREF="../../../../../com/rapplogic/xbee/xmpp/XBeeXmpp.html#getPassword()">getPassword</A>, <A HREF="../../../../../com/rapplogic/xbee/xmpp/XBeeXmpp.html#getPort()">getPort</A>, <A HREF="../../../../../com/rapplogic/xbee/xmpp/XBeeXmpp.html#getPresenceMap()">getPresenceMap</A>, <A HREF="../../../../../com/rapplogic/xbee/xmpp/XBeeXmpp.html#getServer()">getServer</A>, <A HREF="../../../../../com/rapplogic/xbee/xmpp/XBeeXmpp.html#getUser()">getUser</A>, <A HREF="../../../../../com/rapplogic/xbee/xmpp/XBeeXmpp.html#initXmpp()">initXmpp</A>, <A HREF="../../../../../com/rapplogic/xbee/xmpp/XBeeXmpp.html#isAvailable(org.jivesoftware.smack.packet.Presence)">isAvailable</A>, <A HREF="../../../../../com/rapplogic/xbee/xmpp/XBeeXmpp.html#isOfflineMessages()">isOfflineMessages</A>, <A HREF="../../../../../com/rapplogic/xbee/xmpp/XBeeXmpp.html#isValidSender(java.lang.String, java.lang.String)">isValidSender</A>, <A HREF="../../../../../com/rapplogic/xbee/xmpp/XBeeXmpp.html#presenceChanged(org.jivesoftware.smack.packet.Presence)">presenceChanged</A>, <A HREF="../../../../../com/rapplogic/xbee/xmpp/XBeeXmpp.html#removePacketListener(com.rapplogic.xbee.xmpp.PresenceListener)">removePacketListener</A>, <A HREF="../../../../../com/rapplogic/xbee/xmpp/XBeeXmpp.html#setConnection(org.jivesoftware.smack.XMPPConnection)">setConnection</A>, <A HREF="../../../../../com/rapplogic/xbee/xmpp/XBeeXmpp.html#setOfflineMessages(boolean)">setOfflineMessages</A>, <A HREF="../../../../../com/rapplogic/xbee/xmpp/XBeeXmpp.html#setPassword(java.lang.String)">setPassword</A>, <A HREF="../../../../../com/rapplogic/xbee/xmpp/XBeeXmpp.html#setPort(java.lang.Integer)">setPort</A>, <A HREF="../../../../../com/rapplogic/xbee/xmpp/XBeeXmpp.html#setServer(java.lang.String)">setServer</A>, <A HREF="../../../../../com/rapplogic/xbee/xmpp/XBeeXmpp.html#setUser(java.lang.String)">setUser</A>, <A HREF="../../../../../com/rapplogic/xbee/xmpp/XBeeXmpp.html#shutdown()">shutdown</A>, <A HREF="../../../../../com/rapplogic/xbee/xmpp/XBeeXmpp.html#verifyPresence(java.lang.String)">verifyPresence</A></CODE></TD>
+<TD><CODE><A HREF="../../../../../com/rapplogic/xbee/xmpp/XBeeXmpp.html#connectXmpp(java.lang.String, java.lang.Integer, java.lang.String, java.lang.String)">connectXmpp</A>, <A HREF="../../../../../com/rapplogic/xbee/xmpp/XBeeXmpp.html#getXmppConnector(java.lang.String, java.lang.Integer, java.lang.String, java.lang.String)">getXmppConnector</A>, <A HREF="../../../../../com/rapplogic/xbee/xmpp/XBeeXmpp.html#getXmppThing()">getXmppThing</A>, <A HREF="../../../../../com/rapplogic/xbee/xmpp/XBeeXmpp.html#isOfflineMessages()">isOfflineMessages</A>, <A HREF="../../../../../com/rapplogic/xbee/xmpp/XBeeXmpp.html#setOfflineMessages(boolean)">setOfflineMessages</A>, <A HREF="../../../../../com/rapplogic/xbee/xmpp/XBeeXmpp.html#shutdown()">shutdown</A></CODE></TD>
+</TR>
+</TABLE>
+&nbsp;<A NAME="methods_inherited_from_class_com.rapplogic.xbee.api.XBee"><!-- --></A>
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
+<TR BGCOLOR="#EEEEFF" CLASS="TableSubHeadingColor">
+<TH ALIGN="left"><B>Methods inherited from class com.rapplogic.xbee.api.XBee</B></TH>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD><CODE>addPacketListener, clearResponseQueue, getCurrentFrameId, getNextFrameId, getResponse, getResponse, initProviderConnection, isConnected, removePacketListener, sendAsynchronous, sendAtCommand, sendPacket, sendPacket, sendRequest, sendSynchronous, sendSynchronous, updateFrameId</CODE></TD>
 </TR>
 </TABLE>
 &nbsp;<A NAME="methods_inherited_from_class_java.lang.Object"><!-- --></A>
@@ -268,15 +312,18 @@ Provides communication with an XBee radio over XMPP.
 </TR>
 </TABLE>
 
-<A NAME="XBeeXmppClient(com.rapplogic.xbee.api.XBee, java.lang.String, java.lang.Integer, java.lang.String, java.lang.String, java.lang.String)"><!-- --></A><H3>
+<A NAME="XBeeXmppClient()"><!-- --></A><H3>
 XBeeXmppClient</H3>
 <PRE>
-public <B>XBeeXmppClient</B>(com.rapplogic.xbee.api.XBee&nbsp;xbee,
-                      java.lang.String&nbsp;server,
-                      java.lang.Integer&nbsp;port,
-                      java.lang.String&nbsp;user,
-                      java.lang.String&nbsp;password,
-                      java.lang.String&nbsp;gateway)</PRE>
+public <B>XBeeXmppClient</B>()</PRE>
+<DL>
+</DL>
+<HR>
+
+<A NAME="XBeeXmppClient(com.rapplogic.xbee.api.XBeeConfiguration)"><!-- --></A><H3>
+XBeeXmppClient</H3>
+<PRE>
+public <B>XBeeXmppClient</B>(com.rapplogic.xbee.api.XBeeConfiguration&nbsp;conf)</PRE>
 <DL>
 </DL>
 
@@ -289,6 +336,65 @@ public <B>XBeeXmppClient</B>(com.rapplogic.xbee.api.XBee&nbsp;xbee,
 <B>Method Detail</B></FONT></TH>
 </TR>
 </TABLE>
+
+<A NAME="open(java.lang.String, java.lang.String, java.lang.String)"><!-- --></A><H3>
+open</H3>
+<PRE>
+public void <B>open</B>(java.lang.String&nbsp;user,
+                 java.lang.String&nbsp;password,
+                 java.lang.String&nbsp;gateway)
+          throws org.jivesoftware.smack.XMPPException,
+                 com.rapplogic.xbee.api.XBeeException</PRE>
+<DL>
+<DD><DL>
+</DL>
+</DD>
+<DD><DL>
+
+<DT><B>Throws:</B>
+<DD><CODE>org.jivesoftware.smack.XMPPException</CODE>
+<DD><CODE>com.rapplogic.xbee.api.XBeeException</CODE></DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="open(java.lang.String, java.lang.Integer, java.lang.String, java.lang.String, java.lang.String)"><!-- --></A><H3>
+open</H3>
+<PRE>
+public void <B>open</B>(java.lang.String&nbsp;server,
+                 java.lang.Integer&nbsp;port,
+                 java.lang.String&nbsp;user,
+                 java.lang.String&nbsp;password,
+                 java.lang.String&nbsp;gateway)
+          throws org.jivesoftware.smack.XMPPException,
+                 com.rapplogic.xbee.api.XBeeException</PRE>
+<DL>
+<DD><DL>
+</DL>
+</DD>
+<DD><DL>
+
+<DT><B>Throws:</B>
+<DD><CODE>org.jivesoftware.smack.XMPPException</CODE>
+<DD><CODE>com.rapplogic.xbee.api.XBeeException</CODE></DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="open(java.lang.String, int)"><!-- --></A><H3>
+open</H3>
+<PRE>
+public void <B>open</B>(java.lang.String&nbsp;port,
+                 int&nbsp;speed)</PRE>
+<DL>
+<DD><DL>
+<DT><B>Specified by:</B><DD><CODE>open</CODE> in interface <CODE>com.rapplogic.xbee.api.IXBee</CODE><DT><B>Overrides:</B><DD><CODE>open</CODE> in class <CODE>com.rapplogic.xbee.api.XBee</CODE></DL>
+</DD>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<HR>
 
 <A NAME="isGatewayOnline()"><!-- --></A><H3>
 isGatewayOnline</H3>
@@ -328,27 +434,6 @@ public void <B>setGateway</B>(java.lang.String&nbsp;gateway)</PRE>
 </DD>
 <DD><DL>
 </DL>
-</DD>
-</DL>
-<HR>
-
-<A NAME="start()"><!-- --></A><H3>
-start</H3>
-<PRE>
-public void <B>start</B>()
-           throws org.jivesoftware.smack.XMPPException,
-                  com.rapplogic.xbee.api.XBeeException</PRE>
-<DL>
-<DD>Establishes a connection to the XMPP Server
-<P>
-<DD><DL>
-</DL>
-</DD>
-<DD><DL>
-
-<DT><B>Throws:</B>
-<DD><CODE>org.jivesoftware.smack.XMPPException</CODE>
-<DD><CODE>com.rapplogic.xbee.api.XBeeException</CODE></DL>
 </DD>
 </DL>
 <HR>
@@ -395,7 +480,7 @@ close</H3>
 public void <B>close</B>()</PRE>
 <DL>
 <DD><DL>
-</DL>
+<DT><B>Specified by:</B><DD><CODE>close</CODE> in interface <CODE>com.rapplogic.xbee.api.IXBee</CODE><DT><B>Overrides:</B><DD><CODE>close</CODE> in class <CODE>com.rapplogic.xbee.api.XBee</CODE></DL>
 </DD>
 <DD><DL>
 </DL>
@@ -408,24 +493,11 @@ getRosterList</H3>
 <PRE>
 protected java.util.List&lt;java.lang.String&gt; <B>getRosterList</B>()</PRE>
 <DL>
-<DD><B>Description copied from class: <CODE><A HREF="../../../../../com/rapplogic/xbee/xmpp/XBeeXmpp.html#getRosterList()">XBeeXmpp</A></CODE></B></DD>
-<DD>In order to curtail spam/unsolicited messages,
- XMPP devised a subscription/invitation model.  When you subscribe 
- to another user (add to your roster), you can see their presence but
- can't send them messages yet.  The other user must reciprocate and add
- you to their roster.  Once this is complete both users can exchange
- messages
- <p/>
- Subclass must implement to provide the list of XMPP users 
- that this user would like to talk with.  If not already in
- the users roster, these users will receive an invitation request.
-<P>
 <DD><DL>
-<DT><B>Specified by:</B><DD><CODE><A HREF="../../../../../com/rapplogic/xbee/xmpp/XBeeXmpp.html#getRosterList()">getRosterList</A></CODE> in class <CODE><A HREF="../../../../../com/rapplogic/xbee/xmpp/XBeeXmpp.html" title="class in com.rapplogic.xbee.xmpp">XBeeXmpp</A></CODE></DL>
+</DL>
 </DD>
 <DD><DL>
-
-<DT><B>Returns:</B><DD></DL>
+</DL>
 </DD>
 </DL>
 <HR>
@@ -443,6 +515,20 @@ public org.jivesoftware.smack.Chat <B>getChat</B>()</PRE>
 <DD><DL>
 
 <DT><B>Returns:</B><DD></DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="waitForGatewayOnline(int)"><!-- --></A><H3>
+waitForGatewayOnline</H3>
+<PRE>
+public boolean <B>waitForGatewayOnline</B>(int&nbsp;wait)</PRE>
+<DL>
+<DD><DL>
+</DL>
+</DD>
+<DD><DL>
+</DL>
 </DD>
 </DL>
 <!-- ========= END OF CLASS DATA ========= -->

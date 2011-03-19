@@ -70,15 +70,15 @@ public abstract class XBeeXmppClient extends XBeeXmppPacket implements Connectio
 	}
 	
 	public void open(String server, Integer port, String user, String password, String gateway) throws XMPPException, XBeeException {
-		super.init(server, port, user, password);
 		this.setGateway(gateway);
 		
 		synchronized (this) {
 
 			// default gateway to offline incase they are not in roster
-			this.getPresenceMap().put(this.getGateway(), Boolean.FALSE);
+			this.getXmppThing().getAvailableMap().put(this.getGateway(), Boolean.FALSE);
 			
-			this.connectXmpp();
+			this.getXmppThing().addRosterFriend(gateway);
+			this.connectXmpp(server, port, user, password);
 		}		
 		
 		connection = new XmppXBeeConnection(this);
@@ -90,7 +90,7 @@ public abstract class XBeeXmppClient extends XBeeXmppPacket implements Connectio
 	}
 	
 	public Boolean isGatewayOnline() {
-		return (Boolean) this.getPresenceMap().get(this.getGateway());
+		return (Boolean) this.getXmppThing().getAvailableMap().get(this.getGateway());
 	}
 
 	public String getGateway() {
@@ -153,9 +153,9 @@ public abstract class XBeeXmppClient extends XBeeXmppPacket implements Connectio
 				super.close();	
 			}
 			
-			if (this.getConnection() != null) {
+			if (this.getXmppThing().getConnection() != null) {
 				log.info("Disconnecting XMPP Connection");
-				this.getConnection().disconnect();			
+				this.getXmppThing().getConnection().disconnect();			
 			}
 		} catch (Exception e) {
 			log.error("failed to disconnect connection", e);
@@ -180,7 +180,7 @@ public abstract class XBeeXmppClient extends XBeeXmppPacket implements Connectio
 	 * @return
 	 */
 	public Chat getChat() {
-		return this.getChatMap().get(this.getGateway());
+		return this.getXmppThing().getChatMap().get(this.getGateway());
 	}
 	
 	public boolean waitForGatewayOnline(int wait) {

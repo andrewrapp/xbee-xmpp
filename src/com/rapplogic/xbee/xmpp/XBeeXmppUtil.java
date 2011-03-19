@@ -22,7 +22,6 @@ package com.rapplogic.xbee.xmpp;
 import java.util.Random;
 
 import com.rapplogic.xbee.api.PacketParser;
-import com.rapplogic.xbee.api.XBeePacket;
 import com.rapplogic.xbee.api.XBeeRequest;
 import com.rapplogic.xbee.api.XBeeResponse;
 import com.rapplogic.xbee.util.IntArrayInputStream;
@@ -160,20 +159,5 @@ public class XBeeXmppUtil {
     	} while (last == frameId);
     	
     	return frameId; 
-    }
-    
-    /**
-     * Removes the provider/id from the JID.  For example, removes "/Smack" from xbeegateway@sencha.local/Smack
-     * 
-     * @param jid
-     * @return
-     * Jan 24, 2009
-     */
-    public static String stripProviderFromJid(String jid) {
-    	if (jid.indexOf("/") > 0) {
-    		return jid.substring(0, jid.lastIndexOf("/"));
-    	}
-    	
-    	return jid;
     }
 }

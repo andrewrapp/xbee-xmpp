@@ -20,14 +20,10 @@
 package com.rapplogic.xbee.xmpp.client;
 
 import org.apache.log4j.Logger;
-import org.jivesoftware.smack.XMPPConnection;
-import org.jivesoftware.smack.XMPPException;
-import org.jivesoftware.smack.packet.Presence;
 
-import com.rapplogic.xbee.api.XBee;
 import com.rapplogic.xbee.api.XBeeConfiguration;
-import com.rapplogic.xbee.api.XBeeException;
-import com.rapplogic.xbee.xmpp.XBeeGtalkCommon;
+import com.rapplogic.xmppthing.GtalkConnector;
+import com.rapplogic.xmppthing.XmppConnector;
 
 /**
  * Client implementation for Google Talk
@@ -38,8 +34,6 @@ import com.rapplogic.xbee.xmpp.XBeeGtalkCommon;
 public class XBeeGtalkClient extends XBeeXmppClient {
 
 	private final static Logger log = Logger.getLogger(XBeeGtalkClient.class);
-		
-	private XBeeXmppClient xmpp;
 	
 	public XBeeGtalkClient() {
 		super();
@@ -50,12 +44,7 @@ public class XBeeGtalkClient extends XBeeXmppClient {
 	}
 
 	@Override
-	protected XMPPConnection connect() throws XMPPException {
-		return XBeeGtalkCommon.connect(this.getServer(), this.getPort(), this.getUser(), this.getPassword());
-	}
-
-	@Override
-	protected boolean isAvailable(Presence presence) {
-		return XBeeGtalkCommon.isAvailable(presence);
+	protected XmppConnector getXmppConnector(String server, Integer port, String user, String password) {
+		return new GtalkConnector(server, port, user, password);
 	}
 }
