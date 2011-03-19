@@ -19,16 +19,7 @@
 
 package com.rapplogic.xbee.xmpp.gateway;
 
-import java.util.List;
-
 import org.apache.log4j.Logger;
-import org.jivesoftware.smack.XMPPConnection;
-import org.jivesoftware.smack.XMPPException;
-import org.jivesoftware.smack.packet.Presence;
-
-import com.rapplogic.xbee.api.XBee;
-import com.rapplogic.xbee.api.XBeeException;
-import com.rapplogic.xbee.xmpp.XBeeOpenfireCommon;
 
 /**
  * Implementation of XBeeGateway for Openfire
@@ -46,13 +37,5 @@ public class XBeeOpenfireGateway extends XBeeXmppGateway {
 
 	public XBeeOpenfireGateway() {
 		
-	}
-	
-	protected XMPPConnection connect() throws XMPPException {
-		return XBeeOpenfireCommon.connect(this.getServer(), this.getPort(), this.getUser(), this.getPassword());
-	}
-	
-	protected boolean isAvailable(Presence presence) {
-		return XBeeOpenfireCommon.isAvailable(presence);
 	}
 }

@@ -35,7 +35,7 @@ import com.rapplogic.xbee.api.XBeeResponse;
 import com.rapplogic.xbee.util.ByteUtils;
 import com.rapplogic.xbee.xmpp.DecodeException;
 import com.rapplogic.xbee.xmpp.XBeeXmppPacket;
-import com.rapplogic.xbee.xmpp.XBeeXmppUtil;
+import com.rapplogic.xmppthing.XmppThing;
 
 
 /**
@@ -111,7 +111,6 @@ public abstract class XBeeXmppGateway extends XBeeXmppPacket implements PacketLi
 	}
 
 	private void openInternal(String server, Integer port, String user, String password, List<String> clientList, XBee xbee, String comPort, int baud) throws XMPPException, XBeeException {
-		super.init(server, port, user, password);
 
 		if (clientList == null || clientList.size() == 0) {
 			throw new IllegalArgumentException("client list is null or empty.  you must provide at least one client");
@@ -126,7 +125,7 @@ public abstract class XBeeXmppGateway extends XBeeXmppPacket implements PacketLi
 
 		this.xbee = xbee;
 		
-		this.start();
+		this.start(server, port, user, password);
 	}
 	
 	/**
@@ -137,7 +136,7 @@ public abstract class XBeeXmppGateway extends XBeeXmppPacket implements PacketLi
 	 * @throws XMPPException
 	 * @throws XBeeException
 	 */
-	private void start() throws XMPPException, XBeeException {	
+	private void start(String server, Integer port, String user, String password) throws XMPPException, XBeeException {	
 		if (xbee == null) {
 			// xbee was not passed in.  create
 			xbee = new XBee();	
@@ -153,7 +152,11 @@ public abstract class XBeeXmppGateway extends XBeeXmppPacket implements PacketLi
 			packetListener = true;
 		}
 		
-		this.connectXmpp();
+		for (String friend : this.getClientList()) {
+			this.getXmppThing().addRosterFriend(friend);
+		}
+		
+		this.connectXmpp(server, port, user, password);
 		
 		if (packetListener) {
 			xbee.addPacketListener(this);	
@@ -201,16 +204,16 @@ public abstract class XBeeXmppGateway extends XBeeXmppPacket implements PacketLi
 			log.debug("forwarding response to xmpp clients");
 			
 			// send to all online clients
-			for (String client :this.getChatMap().keySet()) {
-				Boolean presence = this.getPresenceMap().get(client);
+			for (String client :this.getXmppThing().getChatMap().keySet()) {
+				Boolean presence = this.getXmppThing().getAvailableMap().get(client);
 				
 				if (presence != null && presence == Boolean.TRUE) {
 					log.debug("sending packet to " + client + ", message: " + msg.getBody());
-					this.getChatMap().get(client).sendMessage(msg.getBody());
+					this.getXmppThing().getChatMap().get(client).sendMessage(msg.getBody());
 				} else {
 					if (this.isOfflineMessages()) {
 						log.debug("sending packet to offline " + client + ", message: " + msg.getBody());
-						this.getChatMap().get(client).sendMessage(msg.getBody());							
+						this.getXmppThing().getChatMap().get(client).sendMessage(msg.getBody());							
 					} else {
 						// TODO make into a listener callback
 						try {
@@ -248,16 +251,15 @@ public abstract class XBeeXmppGateway extends XBeeXmppPacket implements PacketLi
     	
     	int[] packet = null;
     	
-    	String sender = XBeeXmppUtil.stripProviderFromJid(message.getFrom());
+    	String sender = XmppThing.stripProviderFromJid(message.getFrom());
     	
 	    try {
-
 	    	// security.. make sure the sender is one of our approved clients
-	    	if (!this.isValidSender(sender, message.getBody())) {
+	    	if (!this.getXmppThing().isValidSender(message)) {
 	    		return;
 	    	}
 	    	
-	    	this.verifyPresence(sender);
+	    	this.getXmppThing().verifyPresence(sender);
 	 
 	    	try {
 	    		packet = this.decodeMessage(message);

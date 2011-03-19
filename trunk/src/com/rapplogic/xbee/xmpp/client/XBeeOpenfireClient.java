@@ -20,14 +20,8 @@
 package com.rapplogic.xbee.xmpp.client;
 
 import org.apache.log4j.Logger;
-import org.jivesoftware.smack.XMPPConnection;
-import org.jivesoftware.smack.XMPPException;
-import org.jivesoftware.smack.packet.Presence;
 
-import com.rapplogic.xbee.api.XBee;
 import com.rapplogic.xbee.api.XBeeConfiguration;
-import com.rapplogic.xbee.api.XBeeException;
-import com.rapplogic.xbee.xmpp.XBeeOpenfireCommon;
 
 /**
  * Client implementation for Openfire
@@ -41,24 +35,8 @@ import com.rapplogic.xbee.xmpp.XBeeOpenfireCommon;
 public class XBeeOpenfireClient extends XBeeXmppClient {
 
 	private final static Logger log = Logger.getLogger(XBeeOpenfireClient.class);
-
-	private XBeeXmppClient xmpp;
 	
 	public XBeeOpenfireClient() {
 		super(new XBeeConfiguration().withStartupChecks(false));
 	}
-
-	@Override
-	protected XMPPConnection connect() throws XMPPException {
-		return XBeeOpenfireCommon.connect(this.getServer(), this.getPort(), this.getUser(), this.getPassword());
-	}
-
-	@Override
-	protected boolean isAvailable(Presence presence) {
-		return XBeeOpenfireCommon.isAvailable(presence);
-	}
-	
-	public Boolean isGatewayOnline() {
-		return xmpp.isGatewayOnline();
-	}	
 }

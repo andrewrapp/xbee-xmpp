@@ -33,7 +33,6 @@ import com.rapplogic.xbee.api.XBeeTimeoutException;
 import com.rapplogic.xbee.api.zigbee.ZNetRxIoSampleResponse;
 import com.rapplogic.xbee.xmpp.client.GatewayOfflineException;
 import com.rapplogic.xbee.xmpp.client.XBeeGtalkClient;
-import com.rapplogic.xbee.xmpp.client.XBeeXmppClient;
 
 /**
  * Demonstrates how to use the XBeeGtalkClient to request samples from a remote XBee
